@@ -12,27 +12,27 @@ body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvet
 .wrap{max-width:920px;margin:0 auto;padding:24px}
 h1{font-size:clamp(20px,3.5vw,32px);margin:0 0 10px}
 .sub{color:var(--muted);margin-bottom:18px}
-.searchBar{position:sticky;top:0;background:var(--bg); z-index:10; padding:12px 0 16px; border-radius:12px;}
+.searchBar{position:sticky;top:0;background:linear-gradient(180deg,rgba(11,13,16,.9),rgba(11,13,16,.7));backdrop-filter: blur(8px); z-index:10; padding:12px 0 16px}
 .row{display:flex;gap:10px;align-items:center}
-input[type="text"]{flex:1;padding:14px 14px;border:1px solid #ccc;background:#fff;border-radius:14px;color:#333;outline:none}
-input::placeholder{color:#777}
+input[type="text"]{flex:1;padding:14px 14px;border:1px solid #263142;background:#0f1318;border-radius:14px;color:var(--text);outline:none}
+input::placeholder{color:#6a7a8b}
 button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);color:#001833;font-weight:700;cursor:pointer}
 .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
 @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
-.card{background:var(--card);border:1px solid #ccc;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.15)}
-.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid #ccc;color:#555;background:#eee;font-size:12px}
-.muted{color:var(--muted)}
+.card{background:var(--card);border:1px solid #1b212a;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid #293342;color:#cfe1ff;background:#0e141d;font-size:12px}
+.muted{color:#9db0c6}
 .fine{font-weight:700}
 .hl{background:rgba(78,161,255,.2); padding:0 .2em; border-radius:4px}
-.footer{opacity:.75; font-size:12px; margin-top:14px}
-.empty{border:1px dashed #ccc;border-radius:14px;padding:14px;text-align:center;color:#777}
+.footer{opacity:.75; font-size:12px; margin-top:14px; text-align:right;}
+.empty{border:1px dashed #334357;border-radius:14px;padding:14px;text-align:center;color:#9db0c6}
 .themeToggle{position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:10px;border:none;background:#4ea1ff;color:#001833;font-weight:700;cursor:pointer;}
-.nick{position:fixed;top:12px;right:12px;font-weight:700;color:#4ea1ff;font-size:16px;}
+.nick{position:fixed;top:12px;left:12px;font-weight:700;color:#4ea1ff;font-size:16px;}
 </style>
 </head>
 <body>
 
-<div class="nick">By Jamal Mamedov</div>
+<div class="nick"><a href="https://vk.com/mamedovka" target="_blank" style="color:#4ea1ff; text-decoration:none;">By Jamal Mamedov</a></div>
 <button class="themeToggle" id="themeBtn">Сменить тему</button>
 
 <div class="wrap">
@@ -46,6 +46,7 @@ button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);co
   </div>
   <div id="results" class="grid"></div>
   <div id="empty" class="empty" style="display:none">Ничего не найдено.</div>
+  <div class="footer muted">By <a href="https://vk.com/mamedovka" target="_blank">Jamal Mamedov</a></div>
 </div>
 
 <script>
@@ -58,13 +59,11 @@ document.getElementById('themeBtn').onclick = ()=>{
     document.documentElement.style.setProperty('--card','#12151a');
     document.documentElement.style.setProperty('--text','#e9eef5');
     document.documentElement.style.setProperty('--muted','#9fb0c3');
-    document.documentElement.style.setProperty('--accent','#4ea1ff');
   } else {
-    document.documentElement.style.setProperty('--bg','#ffffff');
-    document.documentElement.style.setProperty('--card','#f5f5f5');
+    document.documentElement.style.setProperty('--bg','#f9f9f9');
+    document.documentElement.style.setProperty('--card','#ffffff');
     document.documentElement.style.setProperty('--text','#333333');
     document.documentElement.style.setProperty('--muted','#777777');
-    document.documentElement.style.setProperty('--accent','#4ea1ff');
   }
 };
 
@@ -81,7 +80,7 @@ function highlight(text, query){
   return out;
 }
 
-// === DB ===
+// === База данных ===
 const DB = [
   // Глава 5
   {gl:'5', art:'5.1', title:'Управление без документов', law:'Управление ТС без документов (см. 2.1.1 ПДД).', fine:'20 000 ₽', tags:['документы','водитель','2.1.1'], syn:['нет документов','без документов','забыл права','нет страховки при себе','нет св-ва о регистрации при себе']},
@@ -185,7 +184,8 @@ const DB = [
   {gl:'19', art:'19.5', title:'Попрошайничество', law:'Занятие попрошайничеством в общественных местах.', fine:'Предупреждение или арест 10 суток', tags:['попрошайничество']},
   {gl:'19', art:'19.6', title:'Предпринимательство без регистрации/лицензии', law:'Деятельность без регистрации/лицензии при обязательности.', fine:'100 000 ₽', tags:['предпринимательство']}
 ];
-// создаём поле для поиска
+
+// === Создаём поле для быстрого поиска ===
 DB.forEach(x=>{
   x._hay = norm([x.title, x.law, (x.tags||[]).join(' '), (x.syn||[]).join(' ')].join(' '));
 });
@@ -224,24 +224,22 @@ function render(results, query){
 
 function search(){
   const q = document.getElementById('q').value.trim();
-  let withScore;
+  let results;
   if(!q){
-    withScore = DB.map(x=>({...x, _s:1}));
+    results = [...DB]; // показываем все статьи если пусто
   } else {
-    withScore = DB.map(x=>({...x, _s:score(x,q)})).filter(x=>x._s>0);
-    withScore.sort((a,b)=> b._s - a._s);
+    results = DB.map(x=>({...x, _s:score(x,q)})).filter(x=>x._s>0);
+    results.sort((a,b)=> b._s - a._s);
   }
-  render(withScore.slice(0, 20), q);
+  render(results.slice(0, 12), q);
 }
 
-document.getElementById('btn').addEventListener('click', search);
+const btn = document.getElementById('btn');
 const inp = document.getElementById('q');
+btn.addEventListener('click', search);
 let t;
 inp.addEventListener('input', ()=>{ clearTimeout(t); t = setTimeout(search, 220); });
-inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); search(); } });
-
-// === Показываем все по умолчанию ===
-search();
+inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); search(); }});
 </script>
 
 </body>
