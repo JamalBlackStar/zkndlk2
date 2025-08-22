@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Кодекс административных правонарушений — Поисковик</title>
+  <style>
+    :root { --bg:#0b0d10; --card:#12151a; --text:#e9eef5; --muted:#9fb0c3; --accent:#4ea1ff; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; background:var(--bg); color:var(--text);}
+    .wrap{max-width:920px;margin:0 auto;padding:24px;position:relative;}
+    h1{font-size:clamp(20px,3.5vw,32px);margin:0 0 10px; text-align:center; letter-spacing:1px;}
+    .sub{color:var(--muted);margin-bottom:18px}
+    .searchBar{position:sticky;top:0;background:linear-gradient(180deg,rgba(11,13,16,.9),rgba(11,13,16,.7));backdrop-filter: blur(8px); z-index:10; padding:12px 0 16px}
+    .row{display:flex;gap:10px;align-items:center}
+    input[type="text"]{flex:1;padding:14px 14px;border:1px solid #263142;background:#0f1318;border-radius:14px;color:var(--text);outline:none}
+    input::placeholder{color:#6a7a8b}
+    button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);color:#001833;font-weight:700;cursor:pointer}
+    .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
+    @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
+    .card{background:var(--card);border:1px solid #1b212a;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid #293342;color:#cfe1ff;background:#0e141d;font-size:12px}
+    .muted{color:#9db0c6}
+    .fine{font-weight:700}
+    .hl{background:rgba(78,161,255,.2); padding:0 .2em; border-radius:4px}
+    .empty{border:1px dashed #334357;border-radius:14px;padding:14px;text-align:center;color:#9db0c6}
+    .author{position:fixed;top:24px;right:24px;color:#4ea1ff;font-weight:bold;text-shadow:0 0 6px #001833; font-size:16px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="author">by Jamal Mamedov</div>
+    <div class="searchBar">
+      <h1>КОДЕКС ОБ АДМИНИСТРАТИВНЫХ НАРУШЕНИЯХ РЕСПУБЛИКИ ПРОВИНЦИИ</h1>
+      <div class="sub">Вводи ситуацию своими словами: «проехал на красный», «без документов», «остановка на переходе» и т.д.</div>
+      <div class="row">
+        <input id="q" type="text" placeholder="Например: проезд на красный / без документов / превышение 40" />
+        <button id="btn">Найти</button>
+      </div>
+    </div>
+
+    <div id="results" class="grid"></div>
+    <div id="empty" class="empty" style="display:none">Ничего не найдено. Попробуйте изменить формулировку: «красный сигнал», «остановка на переходе», «без прав/документов», «обочина/газон», «тонировка», «скорость 20–40»…</div>
+  </div>
+
+<script>
+const norm = s => (s||"\"").toLowerCase().replace(/[ё]/g,'е').replace(/[^a-zA-Zа-яА-Я0-9+ ]+/g,' ').replace(/\s+/g,' ').trim();
+function highlight(text, query){ const q = norm(query).split(' ').filter(w=>w.length>2); if(!q.length) return text; let out = text; q.forEach(w=>{ const re = new RegExp(`(${w.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")})`,'gi'); out = out.replace(re,'<span class="hl">$1</span>'); }); return out;}
+
+// ==== Массив со всеми статьями ====
+const DB = [
+  {gl:5, art:1, title:"Управление без документов", law:"Водитель не имеет при себе документов ПДД.", fine:"20.000 руб", tags:["документы"], syn:["без документов"]},
+  {gl:5, art:2, title:"Непредоставление документов", law:"Не предоставил документы сотруднику полиции.", fine:"30.000 руб или лишение прав", tags:["документы"], syn:["не показал права"]},
+  {gl:5, art:3, title:"Управление без регистрации", law:"Транспортное средство не зарегистрировано или нет гос. номеров.", fine:"10.000 руб", tags:["регистрация","номера"], syn:["без регистрации","нет номеров"]},
+  {gl:5, art:4, title:"Тонировка менее 70%", law:"Управление транспортным средством с тонировкой менее 70% на передних и лобовом стеклах.", fine:"20.000 руб", tags:["тонировка"], syn:["тонировка","цветная пленка"]},
+  {gl:5, art:5, title:"Техническая неисправность", law:"Управление транспортным средством при наличии технической неисправности.", fine:"10-30.000 руб", tags:["техническая","неисправность"], syn:["поломка","тех осмотр"]},
+  {gl:5, art:6, title:"Мотоциклы без шлемов", law:"Перевозка на мотоцикле или мопеде без мотошлемов.", fine:"5.000 руб", tags:["мото","шлем"], syn:["без шлема"]},
+  {gl:5, art:7, title:"Нарушение ПДД пешеходами/велосипедистами", law:"Нарушение правил дорожного движения пешеходами и велосипедистами.", fine:"5-15.000 руб", tags:["пешеход","велосипед"], syn:["пешеход","велосипедист"]},
+  {gl:5, art:8, title:"Посадка/высадка пассажиров со стороны проезжей части", law:"Нарушение правил посадки/высадки пассажиров.", fine:"5.000 руб", tags:["пассажиры"], syn:["высадка","посадка"]},
+  {gl:5, art:9, title:"Игнорирование требования остановки", law:"Игнорирование водителем требования об остановке с помощью жезла.", fine:"20.000 руб", tags:["остановка","жезл"], syn:["не остановился","игнор"]},
+  {gl:5, art:10, title:"Несоблюдение знаков/разметки", law:"Несоблюдение требований дорожных знаков или разметки.", fine:"5.000 руб", tags:["знаки","разметка"], syn:["не соблюдал","знак","разметка"]},
+  {gl:6, art:1, title:"Приоритет с маячками", law:"Использование приоритета в движении с маячками и звуковым сигналом без убедительной безопасности.", fine:"10.000 руб", tags:["сигнал","маячки"], syn:["мигалка","звуковой сигнал"]},
+  {gl:6, art:2, title:"Нарушение аварийных сигналов", law:"Нарушение правил использования аварийных сигналов.", fine:"10.000 руб", tags:["сигнал"], syn:["аварийка"]},
+  {gl:6, art:3, title:"Нарушение знака аварийной остановки", law:"Нарушение правил использования знака аварийной остановки.", fine:"10.000 руб", tags:["аварийка"], syn:["знак остановки"]},
+  {gl:6, art:4, title:"Выключенные фары", law:"Управление транспортным средством с выключенными фарами.", fine:"5.000 руб", tags:["фары"], syn:["без света"]},
+  {gl:6, art:5, title:"Звуковой сигнал", law:"Использование звукового сигнала в нарушение правил.", fine:"5.000 руб", tags:["гудок"], syn:["звуковой сигнал"]},
+  {gl:7, art:1, title:"Проезд на красный", law:"Проезд на красный сигнал светофора или запрещающий жест регулировщика.", fine:"20.000 руб", tags:["красный","светофор"], syn:["проехал на красный"]},
+  {gl:7, art:2, title:"Невыполнение стоп-линии", law:"Не остановился перед стоп-линией при запрещающем сигнале.", fine:"10.000 руб", tags:["стоп-линия"], syn:["не остановился","стоп"]},
+  {gl:8, art:1, title:"Маневр без сигналов", law:"Начало движения, перестроение, поворот без использования сигналов поворота.", fine:"5.000 руб", tags:["маневр","поворот"], syn:["без поворотника"]},
+  {gl:8, art:2, title:"Не предоставил преимущество", law:"Непредоставление преимущества транспортным средствам при перестроении.", fine:"20.000 руб", tags:["поворот","перестроение"], syn:["не пропустил"]},
+  {gl:8, art:3, title:"Поворот из полосы не для маневра", law:"Поворот/разворот из полосы не предназначенной для данного маневра.", fine:"20.000 руб", tags:["поворот"], syn:["неправильная полоса"]},
+  {gl:8, art:4, title:"Движение задним ходом/неправильный маневр", law:"Поворот/разворот/движение задним ходом в нарушение разметки или знаков.", fine:"20.000 руб", tags:["маневр"], syn:["задним ходом","неправильный маневр"]},
+  // ====== Продолжай добавлять остальные статьи по аналогии ======
+];
+DB.forEach(x=>{x._hay = norm([x.title,x.law,(x.tags||[]).join(' '),(x.syn||[]).join(' ')].join(' '));});
+
+function score(item, q){ 
+  const nq = norm(q); if(!nq) return 0; 
+  let s=0; 
+  nq.split(' ').forEach(w=>{ if(w.length>2 && item._hay.includes(w)) s+=2; }); 
+  (item.tags||[]).forEach(t=>{ if(nq.includes(norm(t))) s+=1; }); 
+  (item.syn||[]).forEach(t=>{ if(nq.includes(norm(t))) s+=1.5; }); 
+  if(item._hay.indexOf(nq)>=0) s+=3; 
+  return s;
+}
+
+function render(results, query){ 
+  const box = document.getElementById('results'); 
+  const empty = document.getElementById('empty'); 
+  box.innerHTML=''; 
+  if(!results.length){ empty.style.display='block'; return; } 
+  empty.style.display='none'; 
+  results.forEach(r=>{ 
+    const el=document.createElement('div'); 
+    el.className='card'; 
+    el.innerHTML=`<div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+      <div class="pill">Глава ${r.gl} · Статья ${r.art}</div>
+      <div class="pill">Штраф: <span class="fine">${r.fine}</span></div>
+      </div>
+      <div style="font-weight:700;margin-bottom:6px">${highlight(r.title, query)}</div>
+      <div class="muted">${highlight(r.law, query)}</div>
+      ${r.tags?.length? `<div class="muted" style="margin-top:8px;font-size:12px">Теги: ${r.tags.map(t=>`#${t}`).join(' ')}</div>`:''}`;
+    box.appendChild(el); 
+  });
+}
+
+function search(){ 
+  const q=document.getElementById('q').value; 
+  const withScore=DB.map(x=>({...x,_s:score(x,q)})).filter(x=>x._s>0); 
+  withScore.sort((a,b)=>b._s - a._s); 
+  render(withScore.slice(0,12), q);
+}
+
+const btn=document.getElementById('btn'); 
+const inp=document.getElementById('q'); 
+btn.addEventListener('click', search); 
+let t; 
+inp.addEventListener('input', ()=>{ clearTimeout(t); t=setTimeout(search,220); }); 
+inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); search(); }});
+window.addEventListener('DOMContentLoaded', ()=>{ inp.value='проехал на красный'; search(); });
+</script>
+</body>
+</html>
