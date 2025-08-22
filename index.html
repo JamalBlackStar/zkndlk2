@@ -41,6 +41,23 @@ button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);co
 .nick{position:fixed;top:12px;right:120px;font-weight:700;color:#fff;font-size:16px;}
 a.nick-link{color:#fff;text-decoration:none;}
 .empty{border:1px dashed #ccc;border-radius:14px;padding:14px;text-align:center;color:#777;margin-top:10px;}
+
+/* Анимка частиц */
+.particles{
+  pointer-events:none;
+  position:fixed;
+  top:0; left:0; width:100%; height:100%; z-index:0;
+}
+.particle{
+  position:absolute; border-radius:50%;
+  background:var(--accent);
+  opacity:0.5;
+  animation: float 10s linear infinite;
+}
+@keyframes float{
+  0%{transform:translateY(100vh) translateX(0);}
+  100%{transform:translateY(-10vh) translateX(50vw);}
+}
 </style>
 </head>
 <body>
@@ -60,6 +77,8 @@ a.nick-link{color:#fff;text-decoration:none;}
   <div id="results" class="grid"></div>
   <div id="empty" class="empty" style="display:none">Ничего не найдено.</div>
 </div>
+
+<div class="particles" id="particles"></div>
 
 <script>
 // === Тема ===
@@ -81,7 +100,17 @@ document.getElementById('themeBtn').onclick = ()=>{
 };
 applyTheme();
 
-// === Поиск ===
+// === Частицы ===
+const particles = document.getElementById('particles');
+for(let i=0;i<30;i++){
+  let p = document.createElement('div');
+  p.className='particle';
+  p.style.width=p.style.height=Math.random()*8+2+'px';
+  p.style.left=Math.random()*100+'vw';
+  p.style.animationDuration=(5+Math.random()*10)+'s';
+  particles.appendChild(p);
+}
+
 const DB = [
   // Глава 5
   {gl:'5', art:'5.1', title:'Управление без документов', law:'Управление ТС без документов (см. 2.1.1 ПДД).', fine:'20 000 ₽', tags:['документы','водитель','2.1.1'], syn:['нет документов','без документов','забыл права','нет страховки при себе','нет св-ва о регистрации при себе']},
