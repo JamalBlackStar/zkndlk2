@@ -29,20 +29,42 @@ button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);co
 .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
 @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
 .card{background:var(--card);border:1px solid #1b212a;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.15)}
-.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid #293342;color:#cfe1ff;background:#0e141d;font-size:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid var(--accent);color:var(--text);font-size:12px}
 .muted{color:var(--muted)}
-.fine{font-weight:700}
+.fine,.glart{font-weight:700}
 .hl{background:rgba(78,161,255,.2); padding:0 .2em; border-radius:4px}
-.empty{border:1px dashed #334357;border-radius:14px;padding:14px;text-align:center;color:#9db0c6}
 .themeToggle{position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:10px;border:none;background:#4ea1ff;color:#001833;font-weight:700;cursor:pointer;}
 .nick{position:fixed;top:12px;left:12px;font-weight:700;color:#4ea1ff;font-size:16px;}
-.nick a{color:#4ea1ff;text-decoration:none;}
+.settingsPanel{position:fixed;top:0;right:-260px;width:260px;height:100%;background:var(--card);box-shadow:-4px 0 24px rgba(0,0,0,.3);padding:20px;transition:right .3s;overflow-y:auto;z-index:20;}
+.settingsPanel.active{right:0;}
+.settingsPanel h2{margin-top:0;font-size:18px;color:var(--text);}
+.settingsPanel label{display:block;margin:12px 0 4px;color:var(--text);}
+.colorOption{display:inline-block;width:24px;height:24px;margin:4px;border-radius:50%;cursor:pointer;border:2px solid #fff;}
 </style>
 </head>
 <body>
 
 <div class="nick"><a href="https://vk.com/mamedovka" target="_blank">By Jamal Mamedov</a></div>
-<button class="themeToggle" id="themeBtn">Сменить тему</button>
+<button class="themeToggle" id="settingsBtn">Настройки</button>
+
+<div class="settingsPanel" id="settingsPanel">
+  <h2>Настройки</h2>
+  <label>Тема</label>
+  <select id="themeSelect">
+    <option value="dark">Тёмная</option>
+    <option value="light">Светлая</option>
+  </select>
+  <label>Цвет акцента</label>
+  <div id="colorPicker">
+    <span class="colorOption" data-color="#4ea1ff" style="background:#4ea1ff"></span>
+    <span class="colorOption" data-color="#00d4ff" style="background:#00d4ff"></span>
+    <span class="colorOption" data-color="#00ffb3" style="background:#00ffb3"></span>
+    <span class="colorOption" data-color="#ff3b3b" style="background:#ff3b3b"></span>
+    <span class="colorOption" data-color="#ff7ecb" style="background:#ff7ecb"></span>
+    <span class="colorOption" data-color="#ffffff" style="background:#ffffff; border:1px solid #000"></span>
+    <span class="colorOption" data-color="#000000" style="background:#000000; border:1px solid #fff"></span>
+  </div>
+</div>
 
 <div class="wrap">
   <div class="searchBar">
@@ -58,29 +80,44 @@ button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);co
 </div>
 
 <script>
-// === Тема ===
+// === Настройки темы и цвета ===
 let dark = true;
+let accent = '#4ea1ff';
+
 function applyTheme(){
   if(dark){
     document.documentElement.style.setProperty('--bg','#0b0d10');
     document.documentElement.style.setProperty('--card','#12151a');
     document.documentElement.style.setProperty('--text','#e9eef5');
     document.documentElement.style.setProperty('--muted','#9fb0c3');
-    document.documentElement.style.setProperty('--accent','#4ea1ff');
-    document.querySelectorAll('input[type="text"]').forEach(i=>i.style.background='#0f1318');
-    document.querySelectorAll('input[type="text"]').forEach(i=>i.style.color='#e9eef5');
+    document.documentElement.style.setProperty('--accent',accent);
+    document.querySelectorAll('input[type="text"]').forEach(i=>{i.style.background='#0f1318';i.style.color='#e9eef5'});
   } else {
     document.documentElement.style.setProperty('--bg','#f9f9f9');
     document.documentElement.style.setProperty('--card','#f1f3f6');
     document.documentElement.style.setProperty('--text','#1c1c1c');
     document.documentElement.style.setProperty('--muted','#555');
-    document.documentElement.style.setProperty('--accent','#4ea1ff');
-    document.querySelectorAll('input[type="text"]').forEach(i=>i.style.background='#fff');
-    document.querySelectorAll('input[type="text"]').forEach(i=>i.style.color='#1c1c1c');
+    document.documentElement.style.setProperty('--accent',accent);
+    document.querySelectorAll('input[type="text"]').forEach(i=>{i.style.background='#fff';i.style.color='#1c1c1c'});
   }
+  render(currentResults, currentQuery);
 }
-document.getElementById('themeBtn').onclick = ()=>{ dark=!dark; applyTheme(); };
-applyTheme();
+
+document.getElementById('settingsBtn').onclick = ()=>{
+  document.getElementById('settingsPanel').classList.toggle('active');
+};
+
+document.getElementById('themeSelect').addEventListener('change', e=>{
+  dark = e.target.value==='dark';
+  applyTheme();
+});
+
+document.querySelectorAll('.colorOption').forEach(el=>{
+  el.addEventListener('click', ()=>{
+    accent = el.getAttribute('data-color');
+    applyTheme();
+  });
+});
 
 // === Подсветка ===
 const norm = s => (s||"").toLowerCase().replace(/[ё]/g,'е').replace(/[^a-zA-Zа-яА-Я0-9+ ]+/g,' ').replace(/\s+/g,' ').trim();
@@ -95,7 +132,7 @@ function highlight(text, query){
   return out;
 }
 
-// === Пример DB ===
+// === DB ===
 const DB = [
   // Глава 5
   {gl:'5', art:'5.1', title:'Управление без документов', law:'Управление ТС без документов (см. 2.1.1 ПДД).', fine:'20 000 ₽', tags:['документы','водитель','2.1.1'], syn:['нет документов','без документов','забыл права','нет страховки при себе','нет св-ва о регистрации при себе']},
@@ -200,8 +237,10 @@ const DB = [
   {gl:'19', art:'19.6', title:'Предпринимательство без регистрации/лицензии', law:'Деятельность без регистрации/лицензии при обязательности.', fine:'100 000 ₽', tags:['предпринимательство']}
 ];
 
-// === Создаём поле для быстрого поиска ===
-DB.forEach(x=>{ x._hay = norm([x.title, x.law, (x.tags||[]).join(' '), (x.syn||[]).join(' ')].join(' ')); });
+DB.forEach(x=>{ x._hay = norm([x.title, x.law, (x.tags||[]).join(' '), (x.syn||[]).join(' ')].join(' ')) });
+
+let currentResults = [];
+let currentQuery = '';
 
 // === Поиск ===
 function score(item, q){
@@ -218,6 +257,8 @@ function score(item, q){
 function render(results, query){
   const box = document.getElementById('results');
   const empty = document.getElementById('empty');
+  currentResults = results;
+  currentQuery = query;
   box.innerHTML = '';
   if(!results.length){ empty.style.display='block'; return; }
   empty.style.display='none';
@@ -225,8 +266,8 @@ function render(results, query){
     const el = document.createElement('div');
     el.className = 'card';
     el.innerHTML = `<div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-        <div class="pill">Глава ${r.gl} · Статья ${r.art}</div>
-        <div class="pill">Штраф: <span class="fine">${r.fine}</span></div>
+        <div class="pill glart" style="border-color:${accent}; color:${dark?'#fff':'#000'}">Глава ${r.gl} · Статья ${r.art}</div>
+        <div class="pill fine" style="border-color:${accent}; color:${dark?'#fff':'#000'}">Штраф: ${r.fine}</div>
       </div>
       <div style="font-weight:700;margin-bottom:6px">${highlight(r.title, query)}</div>
       <div class="muted">${highlight(r.law, query)}</div>
@@ -237,15 +278,9 @@ function render(results, query){
 
 function search(){
   const q = document.getElementById('q').value;
-  let results;
-  if(!q.trim()){ // если пустой поиск — показать все
-    results = DB.slice(0, 12);
-  } else {
-    const withScore = DB.map(x=>({...x,_s:score(x,q)})).filter(x=>x._s>0);
-    withScore.sort((a,b)=> b._s - a._s);
-    results = withScore.slice(0, 12);
-  }
-  render(results, q);
+  const withScore = DB.map(x=>({...x, _s:score(x,q)})).filter(x=>q? x._s>0 : true);
+  if(q) withScore.sort((a,b)=> b._s - a._s);
+  render(withScore.slice(0, 12), q);
 }
 
 document.getElementById('btn').addEventListener('click', search);
@@ -254,7 +289,7 @@ const inp = document.getElementById('q');
 inp.addEventListener('input', ()=>{ clearTimeout(t); t = setTimeout(search, 220); });
 inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); search(); }});
 
-// === при загрузке сразу показать все статьи ===
+applyTheme();
 search();
 </script>
 
