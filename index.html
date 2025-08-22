@@ -3,46 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>КОДЕКС ОБ АДМИНИСТРАТИВНЫХ НАРУШЕНИЯХ</title>
+<title>Кодекс об административных нарушениях Республики Провинции</title>
 <style>
 :root {
-  --bg:#0b0d10; --card:#12151a; --text:#e9eef5; --muted:#9fb0c3; --accent:#4ea1ff;
+  --bg-dark:#0b0d10;
+  --bg-light:#f9f9f9;
+  --text-dark:#e9eef5;
+  --text-light:#333333;
+  --muted-dark:#9fb0c3;
+  --muted-light:#777777;
+  --accent:#4ea1ff;
 }
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;background:var(--bg);color:var(--text);overflow-x:hidden;}
-.wrap{max-width:920px;margin:0 auto;padding:24px;position:relative;z-index:1}
+body {
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+  background:var(--bg-dark);
+  color:var(--text-dark);
+  overflow-x:hidden;
+  transition:0.3s;
+}
+.wrap{max-width:920px;margin:0 auto;padding:24px}
 h1{font-size:clamp(20px,3.5vw,32px);margin:0 0 10px}
-.sub{color:var(--muted);margin-bottom:18px}
-.searchBar{position:sticky;top:0;background:linear-gradient(180deg,rgba(11,13,16,.9),rgba(11,13,16,.7));backdrop-filter: blur(8px); z-index:10; padding:12px 0 16px}
+.sub{color:var(--muted-dark);margin-bottom:18px}
+.searchBar{position:sticky;top:0;background:inherit;backdrop-filter:blur(8px);z-index:10;padding:12px 0 16px}
 .row{display:flex;gap:10px;align-items:center}
-input[type="text"]{flex:1;padding:14px 14px;border:1px solid #263142;background:#0f1318;border-radius:14px;color:var(--text);outline:none}
+input[type="text"]{flex:1;padding:14px;border:1px solid #ccc;background:inherit;border-radius:14px;color:inherit;outline:none;transition:0.3s}
 input::placeholder{color:#6a7a8b}
-button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);color:#001833;font-weight:700;cursor:pointer}
+button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);color:#001833;font-weight:700;cursor:pointer;transition:0.3s}
 .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
 @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
-.card{background:var(--card);border:1px solid #1b212a;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);transition:0.3s;}
-.card:hover{transform:translateY(-3px)}
-.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid #293342;color:#cfe1ff;background:#0e141d;font-size:12px}
-.muted{color:#9db0c6}
+.card{background:inherit;border:1px solid #ccc;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);transition:0.3s}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid #293342;color:#cfe1ff;font-size:12px}
+.muted{color:var(--muted-dark)}
 .fine{font-weight:700}
 .hl{background:rgba(78,161,255,.2); padding:0 .2em; border-radius:4px}
-.footer{opacity:.75; font-size:12px; margin-top:14px}
-.empty{border:1px dashed #334357;border-radius:14px;padding:14px;text-align:center;color:#9db0c6}
-.themeToggle{position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:10px;border:none;background:#4ea1ff;color:#001833;font-weight:700;cursor:pointer;z-index:10;}
-.nick{position:fixed;top:12px;left:12px;font-weight:700;color:#ffffff;font-size:16px;z-index:10;}
-
-/* === Анимация частиц === */
-.particle{position:absolute;width:8px;height:8px;background:#4ea1ff;border-radius:50%;opacity:0.6;pointer-events:none;animation:fall 6s linear infinite;}
-@keyframes fall{0%{transform:translateY(-20px);}100%{transform:translateY(110vh);}}
+.themeToggle{position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:10px;border:none;background:var(--accent);color:#001833;font-weight:700;cursor:pointer;}
+.nick{position:fixed;top:12px;right:120px;font-weight:700;color:#fff;font-size:16px;}
+a.nick-link{color:#fff;text-decoration:none;}
+.empty{border:1px dashed #ccc;border-radius:14px;padding:14px;text-align:center;color:#777;margin-top:10px;}
 </style>
 </head>
 <body>
 
-<div class="nick">bu Jamal Mamedov</div>
+<div class="nick"><a href="https://vk.com/mamedovka" class="nick-link" target="_blank">By Jamal Mamedov</a></div>
 <button class="themeToggle" id="themeBtn">Сменить тему</button>
 
 <div class="wrap">
   <div class="searchBar">
-    <h1>КОДЕКС ОБ АДМИНИСТРАТИВНЫХ НАРУШЕНИЯХ РЕСПУБЛИКИ ПРОВИНЦИИ</h1>
+    <h1>Кодекс об административных нарушениях Республики Провинции</h1>
     <div class="sub">Вводи ситуацию своими словами: «проехал на красный», «без документов» и т.д.</div>
     <div class="row">
       <input id="q" type="text" placeholder="Например: проезд на красный / без документов / превышение 40" />
@@ -51,52 +59,27 @@ button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);co
   </div>
   <div id="results" class="grid"></div>
   <div id="empty" class="empty" style="display:none">Ничего не найдено.</div>
-  <div class="footer muted">Прототип работает полностью локально (HTML+JS).</div>
 </div>
-
-<!-- === Частицы === -->
-<script>
-for(let i=0;i<30;i++){
-  const p = document.createElement('div');
-  p.className='particle';
-  p.style.left=Math.random()*100+'vw';
-  p.style.animationDuration=(4+Math.random()*4)+'s';
-  document.body.appendChild(p);
-}
-</script>
 
 <script>
 // === Тема ===
 let dark = true;
+function applyTheme(){
+  if(dark){
+    document.body.style.background = getComputedStyle(document.documentElement).getPropertyValue('--bg-dark');
+    document.body.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-dark');
+    document.querySelectorAll('.muted').forEach(el=>el.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted-dark'));
+  } else {
+    document.body.style.background = getComputedStyle(document.documentElement).getPropertyValue('--bg-light');
+    document.body.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-light');
+    document.querySelectorAll('.muted').forEach(el=>el.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted-light'));
+  }
+}
 document.getElementById('themeBtn').onclick = ()=>{
   dark = !dark;
-  if(dark){
-    document.documentElement.style.setProperty('--bg','#0b0d10');
-    document.documentElement.style.setProperty('--card','#12151a');
-    document.documentElement.style.setProperty('--text','#e9eef5');
-    document.documentElement.style.setProperty('--muted','#9fb0c3');
-    document.documentElement.style.setProperty('--accent','#4ea1ff');
-  } else {
-    document.documentElement.style.setProperty('--bg','#f9f9f9');
-    document.documentElement.style.setProperty('--card','#ffffff');
-    document.documentElement.style.setProperty('--text','#333333');
-    document.documentElement.style.setProperty('--muted','#777777');
-    document.documentElement.style.setProperty('--accent','#4ea1ff');
-  }
+  applyTheme();
 };
-
-// === Подсветка ===
-const norm = s => (s||"").toLowerCase().replace(/[ё]/g,'е').replace(/[^a-zA-Zа-яА-Я0-9+ ]+/g,' ').replace(/\s+/g,' ').trim();
-function highlight(text, query){
-  const q = norm(query).split(' ').filter(w=>w.length>2);
-  if(!q.length) return text;
-  let out = text;
-  q.forEach(w=>{
-    const re = new RegExp(`(${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,'gi');
-    out = out.replace(re,'<span class="hl">$1</span>');
-  });
-  return out;
-}
+applyTheme();
 
 const DB = [
   // Глава 5
@@ -200,54 +183,6 @@ const DB = [
   {gl:'19', art:'19.5', title:'Попрошайничество', law:'Занятие попрошайничеством в общественных местах.', fine:'Предупреждение или арест 10 суток', tags:['попрошайничество']},
   {gl:'19', art:'19.6', title:'Предпринимательство без регистрации/лицензии', law:'Деятельность без регистрации/лицензии при обязательности.', fine:'100 000 ₽', tags:['предпринимательство']}
 ];
-DB.forEach(x=>{
-  x._hay = norm([x.title, x.law, (x.tags||[]).join(' '), (x.syn||[]).join(' ')].join(' '));
-});
-
-function score(item, q){
-  const nq = norm(q);
-  if(!nq) return 0;
-  let s = 0;
-  nq.split(' ').forEach(w=>{ if(w.length>2 && item._hay.includes(w)) s+=2; });
-  (item.tags||[]).forEach(t=>{ if(nq.includes(norm(t))) s+=1; });
-  (item.syn||[]).forEach(t=>{ if(nq.includes(norm(t))) s+=1.5; });
-  if(item._hay.indexOf(nq)>=0) s+=3;
-  return s;
-}
-
-function render(results, query){
-  const box = document.getElementById('results');
-  const empty = document.getElementById('empty');
-  box.innerHTML = '';
-  if(!results.length){ empty.style.display='block'; return; }
-  empty.style.display='none';
-  results.forEach(r=>{
-    const el = document.createElement('div');
-    el.className = 'card';
-    el.innerHTML = `<div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-        <div class="pill">Глава ${r.gl} · Статья ${r.art}</div>
-        <div class="pill">Штраф: <span class="fine">${r.fine}</span></div>
-      </div>
-      <div style="font-weight:700;margin-bottom:6px">${highlight(r.title, query)}</div>
-      <div class="muted">${highlight(r.law, query)}</div>
-      ${r.tags?.length? `<div class="muted" style="margin-top:8px;font-size:12px">Теги: ${r.tags.map(t=>`#${t}`).join(' ')}</div>`:''}`;
-    box.appendChild(el);
-  });
-}
-
-function search(){
-  const q = document.getElementById('q').value;
-  const withScore = DB.map(x=>({...x, _s:score(x,q)})).filter(x=>x._s>0);
-  withScore.sort((a,b)=> b._s - a._s);
-  render(withScore.slice(0, 12), q);
-}
-
-const btn = document.getElementById('btn');
-const inp = document.getElementById('q');
-btn.addEventListener('click', search);
-let t;
-inp.addEventListener('input', ()=>{ clearTimeout(t); t = setTimeout(search, 220); });
-inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); search(); }});
 </script>
 
 </body>
