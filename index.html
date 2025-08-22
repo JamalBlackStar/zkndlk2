@@ -5,19 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Шпаргалка ПДД — Поисковик</title>
   <style>
-    :root { --bg:#0b0d10; --card:#12151a; --text:#e9eef5; --muted:#9fb0c3; --accent:#4ea1ff; }
+    :root {
+      --bg-dark:#0b0d10; --card-dark:#12151a; --text-dark:#e9eef5; --muted-dark:#9fb0c3; --accent-dark:#4ea1ff;
+      --bg-light:#f7f8fa; --card-light:#ffffff; --text-light:#2b2b2b; --muted-light:#6a7a8b; --accent-light:#4ea1ff;
+    }
+    [data-theme="dark"]{
+      --bg:var(--bg-dark); --card:var(--card-dark); --text:var(--text-dark); --muted:var(--muted-dark); --accent:var(--accent-dark);
+    }
+    [data-theme="light"]{
+      --bg:var(--bg-light); --card:var(--card-light); --text:var(--text-light); --muted:var(--muted-light); --accent:var(--accent-light);
+    }
+
     *{box-sizing:border-box}
     body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; background:var(--bg); color:var(--text);}
     .wrap{max-width:920px;margin:0 auto;padding:24px}
-    h1{font-size:clamp(20px,3.5vw,32px);margin:0 0 10px}
-    .sub{color:var(--muted);margin-bottom:18px}
-    .searchBar{position:sticky;top:0;background:linear-gradient(180deg,rgba(11,13,16,.9),rgba(11,13,16,.7));backdrop-filter: blur(8px); z-index:10; padding:12px 0 16px}
-    .row{display:flex;gap:10px;align-items:center}
+    h1{font-size:clamp(20px,3.5vw,32px);margin:0 0 6px}
+    .sub{color:var(--muted);margin-bottom:16px}
+    .searchBar{position:sticky;top:0;background:linear-gradient(180deg,rgba(11,13,16,.9),rgba(11,13,16,.7));backdrop-filter: blur(8px); z-index:10; padding:12px 0 16px; display:flex;flex-direction:column}
+    .row{display:flex;gap:10px;align-items:center;margin-top:8px}
     input[type="text"]{flex:1;padding:14px 14px;border:1px solid #263142;background:#0f1318;border-radius:14px;color:var(--text);outline:none}
     input::placeholder{color:#6a7a8b}
     button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);color:#001833;font-weight:700;cursor:pointer}
     .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
-    @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
+    min-width:720px{.grid{grid-template-columns:1fr 1fr}}
     .card{background:var(--card);border:1px solid #1b212a;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
     .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid #293342;color:#cfe1ff;background:#0e141d;font-size:12px}
     .muted{color:#9db0c6}
@@ -25,12 +35,16 @@
     .hl{background:rgba(78,161,255,.2); padding:0 .2em; border-radius:4px}
     .footer{opacity:.75; font-size:12px; margin-top:14px}
     .empty{border:1px dashed #334357;border-radius:14px;padding:14px;text-align:center;color:#9db0c6}
+    .theme-toggle{margin-top:10px; align-self:flex-end; cursor:pointer; font-size:14px; color:var(--accent)}
   </style>
 </head>
-<body>
+<body data-theme="dark">
   <div class="wrap">
     <div class="searchBar">
-      <h1>Шпаргалка ПДД — быстрый поиск статей</h1>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h1>Шпаргалка ПДД — Vito Murphy</h1>
+        <div class="theme-toggle" id="themeToggle">Светлая тема</div>
+      </div>
       <div class="sub">Вводи ситуацию своими словами: «проехал на красный», «без документов», «остановка на переходе» и т.д.</div>
       <div class="row">
         <input id="q" type="text" placeholder="Например: проезд на красный / без документов / превышение 40" />
@@ -45,7 +59,6 @@
   </div>
 
 <script>
-// === Нормализация и подсветка ===
 const norm = s => (s||"")
   .toLowerCase()
   .replace(/[ё]/g,'е')
@@ -60,11 +73,13 @@ function highlight(text, query){
   q.forEach(w=>{
     const re = new RegExp(`(${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,'gi');
     out = out.replace(re,'<span class="hl">$1</span>');
-  });
+
+
+});
   return out;
 }
 
-// === База знаний (сокращённая из твоего списка; можно расширять) ===
+// === База законов сохраняем без изменений ===
 const DB = [
   // Глава 5
   {gl:'5', art:'5.1', title:'Управление без документов', law:'Управление ТС без документов (см. 2.1.1 ПДД).', fine:'20 000 ₽', tags:['документы','водитель','2.1.1'], syn:['нет документов','без документов','забыл права','нет страховки при себе','нет св-ва о регистрации при себе']},
@@ -86,7 +101,10 @@ const DB = [
   {gl:'6', art:'6.5', title:'Неправомерное использование звукового сигнала', law:'Использование звукового сигнала с нарушением ПДД (см. 8.3 ПДД).', fine:'Предупреждение или 5 000 ₽', tags:['сигнал','клаксон'], syn:['гудел','сигналил']},
 
   // Глава 7
-  {gl:'7', art:'7.1', title:'Проезд на запрещающий сигнал', law:'Красный сигнал/жест регулировщика/жёлтый при возможности остановки (см. 6.1 ПДД).', fine:'20 000 ₽', tags:['светофор','красный','регулировщик'], syn:['проехал на красный','запрещающий сигнал','на желтый']},
+  {gl:'7', art:'7.1', title:'Проезд на запрещающий сигнал', law:'Красный сигнал/жест регулировщика/жёлтый при возможности остановки (см. 6.1 ПДД).', fine:'20 000 ₽', tags:['светофор','красный','регулировщик'], syn:['проехал на красный','запрещающий
+
+
+сигнал','на желтый']},
   {gl:'7', art:'7.2', title:'Не остановился перед стоп-линией', law:'Неисполнение требования остановки перед стоп-линией при запрещающем сигнале (см. 6.2 ПДД).', fine:'10 000 ₽', tags:['стоп-линия','светофор'], syn:['пересёк стоп линию','не остановился у стоп линии']},
 
   // Глава 8
@@ -117,7 +135,10 @@ const DB = [
   {gl:'11', art:'11.5', title:'Иные нарушения остановки/стоянки', law:'Иные случаи нарушений остановки/стоянки (гл. 13 ПДД).', fine:'10 000 ₽', tags:['остановка','стоянка']},
 
   // Глава 12 — перекрёстки
-  {gl:'12', art:'12.1', title:'Перекрёсток: без опасности', law:'Нарушения правил проезда перекрёстков (без опасности) (гл. 14 ПДД).', fine:'Предупреждение или 5 000 ₽', tags:['перекрёсток']},
+  {gl:'12', art:'12.1', title:'Перекрёсток: без
+
+
+опасности', law:'Нарушения правил проезда перекрёстков (без опасности) (гл. 14 ПДД).', fine:'Предупреждение или 5 000 ₽', tags:['перекрёсток']},
   {gl:'12', art:'12.2', title:'Перекрёсток: с опасностью', law:'Нарушения правил проезда перекрёстков (с опасностью) (гл. 14 ПДД).', fine:'10 000 ₽', tags:['перекрёсток','опасность']},
 
   // Глава 13 — Ж/д
@@ -148,7 +169,9 @@ const DB = [
   {gl:'17', art:'17.1.4', title:'Управление в состоянии опьянения / передача управления пьяному', law:'Состояние опьянения (см. 2.4 ПДД).', fine:'30 000 ₽ + лишение до 1 года', tags:['опьянение']},
   {gl:'17', art:'17.1.5', title:'Отказ от медосвидетельствования', law:'Невыполнение требования пройти медосвидетельствование.', fine:'30 000 ₽ + лишение до 1 года', tags:['медосвидетельствование']},
   {gl:'17', art:'17.2', title:'Опасное вождение', law:'Опасное вождение (см. 2.4 ПДД).', fine:'до 30 000 ₽ + лишение до 2 лет', tags:['опасное вождение']},
-  {gl:'17', art:'17.3', title:'Неуплата штрафов до 10 000 ₽', law:'Управление при неуплате штрафов до 10 000 ₽.', fine:'Предупреждение', tags:['штрафы']},
+
+
+{gl:'17', art:'17.3', title:'Неуплата штрафов до 10 000 ₽', law:'Управление при неуплате штрафов до 10 000 ₽.', fine:'Предупреждение', tags:['штрафы']},
   {gl:'17', art:'17.4', title:'Неуплата штрафов 10–50 000 ₽', law:'Управление при неуплате штрафов 10–50 000 ₽.', fine:'30 000 ₽', tags:['штрафы']},
   {gl:'17', art:'17.5', title:'Неуплата штрафов 50–100 000 ₽', law:'Управление при неуплате штрафов 50–100 000 ₽.', fine:'50 000 ₽ + лишение 1 год', tags:['штрафы']},
   {gl:'17', art:'17.6', title:'Неуплата штрафов >100 000 ₽', law:'Управление при неуплате штрафов более 100 000 ₽.', fine:'100 000 ₽ + лишение 2 года', tags:['штрафы']},
@@ -176,13 +199,9 @@ function score(item, q){
   const nq = norm(q);
   if(!nq) return 0;
   let s = 0;
-  // точные вхождения ключевых слов
   nq.split(' ').forEach(w=>{ if(w.length>2 && item._hay.includes(w)) s+=2; });
-  // бонусы за совпадение по тегам
   (item.tags||[]).forEach(t=>{ if(nq.includes(norm(t))) s+=1; });
-  // бонусы за синонимы
   (item.syn||[]).forEach(t=>{ if(nq.includes(norm(t))) s+=1.5; });
-  // частичные совпадения
   if(item._hay.indexOf(nq)>=0) s+=3;
   return s;
 }
@@ -213,10 +232,9 @@ function search(){
   const q = document.getElementById('q').value;
   const withScore = DB.map(x=>({...x, _s:score(x,q)})).filter(x=>x._s>0);
   withScore.sort((a,b)=> b._s - a._s);
-  render(withScore.slice(0, 12), q);
+  render(withScore, q); // Показываем все найденные результаты
 }
 
-// UX: поиск по кнопке, по Enter и «по мере ввода» с задержкой
 const btn = document.getElementById('btn');
 const inp = document.getElementById('q');
 btn.addEventListener('click', search);
@@ -224,7 +242,20 @@ let t;
 inp.addEventListener('input', ()=>{ clearTimeout(t); t = setTimeout(search, 220); });
 inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); search(); }});
 
-// Демо-запрос для первого запуска
+// === Тема светлая/тёмная ===
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', ()=>{
+  const body = document.body;
+  if(body.getAttribute('data-theme')==='dark'){
+    body.setAttribute('data-theme','light');
+    themeToggle.textContent = 'Тёмная тема';
+  } else {
+    body.setAttribute('data-theme','dark');
+    themeToggle.textContent = 'Светлая тема';
+  }
+});
+
+// Демо-запрос при запуске
 window.addEventListener('DOMContentLoaded', ()=>{
   inp.value = 'проехал на красный';
   search();
