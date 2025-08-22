@@ -33,7 +33,6 @@ button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);co
 .muted{color:var(--muted)}
 .fine{font-weight:700}
 .hl{background:rgba(78,161,255,.2); padding:0 .2em; border-radius:4px}
-.footer{opacity:.75; font-size:12px; margin-top:14px}
 .empty{border:1px dashed #334357;border-radius:14px;padding:14px;text-align:center;color:#9db0c6}
 .themeToggle{position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:10px;border:none;background:#4ea1ff;color:#001833;font-weight:700;cursor:pointer;}
 .nick{position:fixed;top:12px;left:12px;font-weight:700;color:#4ea1ff;font-size:16px;}
@@ -56,7 +55,6 @@ button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);co
   </div>
   <div id="results" class="grid"></div>
   <div id="empty" class="empty" style="display:none">Ничего не найдено.</div>
-  <div class="footer muted">Прототип работает полностью локально (HTML+JS).</div>
 </div>
 
 <script>
@@ -81,10 +79,7 @@ function applyTheme(){
     document.querySelectorAll('input[type="text"]').forEach(i=>i.style.color='#1c1c1c');
   }
 }
-document.getElementById('themeBtn').onclick = ()=>{
-  dark = !dark;
-  applyTheme();
-};
+document.getElementById('themeBtn').onclick = ()=>{ dark=!dark; applyTheme(); };
 applyTheme();
 
 // === Подсветка ===
@@ -100,7 +95,7 @@ function highlight(text, query){
   return out;
 }
 
-// === Пример DB, можно добавить свои статьи ===
+// === Пример DB ===
 const DB = [
   // Глава 5
   {gl:'5', art:'5.1', title:'Управление без документов', law:'Управление ТС без документов (см. 2.1.1 ПДД).', fine:'20 000 ₽', tags:['документы','водитель','2.1.1'], syn:['нет документов','без документов','забыл права','нет страховки при себе','нет св-ва о регистрации при себе']},
@@ -206,9 +201,7 @@ const DB = [
 ];
 
 // === Создаём поле для быстрого поиска ===
-DB.forEach(x=>{
-  x._hay = norm([x.title, x.law, (x.tags||[]).join(' '), (x.syn||[]).join(' ')].join(' '));
-});
+DB.forEach(x=>{ x._hay = norm([x.title, x.law, (x.tags||[]).join(' '), (x.syn||[]).join(' ')].join(' ')); });
 
 // === Поиск ===
 function score(item, q){
@@ -244,9 +237,15 @@ function render(results, query){
 
 function search(){
   const q = document.getElementById('q').value;
-  const withScore = DB.map(x=>({...x, _s:score(x,q)})).filter(x=>x._s>0);
-  withScore.sort((a,b)=> b._s - a._s);
-  render(withScore.slice(0, 12), q);
+  let results;
+  if(!q.trim()){ // если пустой поиск — показать все
+    results = DB.slice(0, 12);
+  } else {
+    const withScore = DB.map(x=>({...x,_s:score(x,q)})).filter(x=>x._s>0);
+    withScore.sort((a,b)=> b._s - a._s);
+    results = withScore.slice(0, 12);
+  }
+  render(results, q);
 }
 
 document.getElementById('btn').addEventListener('click', search);
@@ -254,6 +253,9 @@ let t;
 const inp = document.getElementById('q');
 inp.addEventListener('input', ()=>{ clearTimeout(t); t = setTimeout(search, 220); });
 inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); search(); }});
+
+// === при загрузке сразу показать все статьи ===
+search();
 </script>
 
 </body>
