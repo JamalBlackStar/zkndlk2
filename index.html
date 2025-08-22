@@ -27,42 +27,41 @@ input[type="text"]{flex:1;padding:14px 14px;border:1px solid #263142;background:
 input::placeholder{color:#6a7a8b}
 .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
 @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
-.card{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.15);display:flex;flex-direction:column}
-.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-size:12px}
-.muted{color:var(--muted)}
-.fine{font-weight:700}
-.hl{background:rgba(78,161,255,.2); padding:0 .2em; border-radius:4px}
-.themeToggle{position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:10px;border:none;background:#4ea1ff;color:#001833;font-weight:700;cursor:pointer;}
+.card{background:var(--card);border:1px solid #1b212a;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;color:var(--text);font-weight:700;font-size:12px;}
+.footer{opacity:.75; font-size:12px; margin-top:14px; display:none;}
+.empty{border:1px dashed #334357;border-radius:14px;padding:14px;text-align:center;color:#9db0c6}
+.themeBtn, .settingsBtn{position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:10px;border:none;background:var(--accent);color:#001833;font-weight:700;cursor:pointer;}
 .nick{position:fixed;top:12px;left:12px;font-weight:700;color:#4ea1ff;font-size:16px;}
 .nick a{color:#4ea1ff;text-decoration:none;}
-.settingsPanel{position:fixed;top:0;right:-280px;width:280px;height:100%;background:var(--card);box-shadow:-4px 0 12px rgba(0,0,0,.3);transition:right .3s;z-index:100;display:flex;flex-direction:column;padding:20px;gap:12px}
-.settingsPanel.show{right:0}
-.closeSettings{align-self:flex-end;cursor:pointer;font-weight:700;color:var(--muted)}
-.colorOption{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-.colorOption button{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer}
+.settingsPanel{position:fixed;top:0;right:0;width:280px;height:100%;background:var(--card);box-shadow:-2px 0 12px rgba(0,0,0,0.3);padding:16px;display:none;flex-direction:column;z-index:20;}
+.settingsPanel h2{margin-top:0;margin-bottom:12px;font-size:18px;color:var(--text)}
+.closeSettings{align-self:flex-end;cursor:pointer;font-weight:bold;font-size:18px;color:var(--text)}
+.colorOption{width:24px;height:24px;border-radius:50%;margin:4px;cursor:pointer;border:2px solid #fff; display:inline-block;}
+.colorRow{margin-bottom:8px;display:flex;gap:6px;}
 </style>
 </head>
 <body>
 
 <div class="nick"><a href="https://vk.com/mamedovka" target="_blank">By Jamal Mamedov</a></div>
-<button class="themeToggle" id="settingsBtn">⚙ Настройки</button>
+<button class="settingsBtn" id="settingsBtn">⚙ Настройки</button>
 
 <div class="settingsPanel" id="settingsPanel">
-  <div class="closeSettings" id="closeSettings">✕ Закрыть</div>
-  <div><strong>Тема:</strong></div>
+  <div class="closeSettings" id="closeSettings">✖</div>
+  <h2>Настройки темы</h2>
   <div>
-    <button id="darkThemeBtn">Тёмная</button>
-    <button id="lightThemeBtn">Светлая</button>
+    <label><input type="radio" name="theme" value="dark"> Темная</label><br>
+    <label><input type="radio" name="theme" value="light"> Светлая</label>
   </div>
-  <div><strong>Цвет обводки карточек:</strong></div>
-  <div class="colorOption">
-    <button data-color="#4ea1ff" style="background:#4ea1ff"></button>
-    <button data-color="#00ffff" style="background:#00ffff"></button>
-    <button data-color="#3eb489" style="background:#3eb489"></button>
-    <button data-color="#ff4e4e" style="background:#ff4e4e"></button>
-    <button data-color="#ff69b4" style="background:#ff69b4"></button>
-    <button data-color="#ffffff" style="background:#ffffff"></button>
-    <button data-color="#000000" style="background:#000000"></button>
+  <h2>Цвет акцента</h2>
+  <div class="colorRow">
+    <div class="colorOption" style="background:#4ea1ff" data-color="#4ea1ff"></div>
+    <div class="colorOption" style="background:#00ffff" data-color="#00ffff"></div>
+    <div class="colorOption" style="background:#3affc1" data-color="#3affc1"></div>
+    <div class="colorOption" style="background:#ff4e4e" data-color="#ff4e4e"></div>
+    <div class="colorOption" style="background:#ff69b4" data-color="#ff69b4"></div>
+    <div class="colorOption" style="background:#ffffff" data-color="#ffffff"></div>
+    <div class="colorOption" style="background:#000000" data-color="#000000"></div>
   </div>
 </div>
 
@@ -79,6 +78,7 @@ input::placeholder{color:#6a7a8b}
 </div>
 
 <script>
+// === DB ===
 const DB = [
   // Глава 5
   {gl:'5', art:'5.1', title:'Управление без документов', law:'Управление ТС без документов (см. 2.1.1 ПДД).', fine:'20 000 ₽', tags:['документы','водитель','2.1.1'], syn:['нет документов','без документов','забыл права','нет страховки при себе','нет св-ва о регистрации при себе']},
@@ -182,38 +182,34 @@ const DB = [
   {gl:'19', art:'19.5', title:'Попрошайничество', law:'Занятие попрошайничеством в общественных местах.', fine:'Предупреждение или арест 10 суток', tags:['попрошайничество']},
   {gl:'19', art:'19.6', title:'Предпринимательство без регистрации/лицензии', law:'Деятельность без регистрации/лицензии при обязательности.', fine:'100 000 ₽', tags:['предпринимательство']}
 ];
+DB.forEach(x=>{x._hay = (x.title+' '+x.law+' '+(x.tags||[]).join(' ')+' '+(x.syn||[]).join(' ')).toLowerCase().replace(/[ё]/g,'е').replace(/[^a-zA-Zа-яА-Я0-9+ ]+/g,' ').replace(/\s+/g,' ').trim()});
 
-// === Нормализация ===
-const norm = s => (s||"").toLowerCase().replace(/[ё]/g,'е').replace(/[^a-zA-Zа-яА-Я0-9+ ]+/g,' ').replace(/\s+/g,' ').trim();
-DB.forEach(x=>{ x._hay = norm([x.title, x.law, (x.tags||[]).join(' '), (x.syn||[]).join(' ')].join(' ')); });
-
-// === Настройки ===
-let dark = localStorage.getItem('theme')==='dark' || true;
-let borderColor = localStorage.getItem('borderColor') || '#4ea1ff';
-
+// === Theme ===
+let dark = localStorage.getItem('theme')==='dark'?true:false;
+let accent = localStorage.getItem('accent')||'#4ea1ff';
 function applyTheme(){
   if(dark){
     document.documentElement.style.setProperty('--bg','#0b0d10');
     document.documentElement.style.setProperty('--card','#12151a');
     document.documentElement.style.setProperty('--text','#e9eef5');
     document.documentElement.style.setProperty('--muted','#9fb0c3');
-    document.documentElement.style.setProperty('--accent',borderColor);
+    document.documentElement.style.setProperty('--accent',accent);
     document.querySelectorAll('input[type="text"]').forEach(i=>{i.style.background='#0f1318';i.style.color='#e9eef5'});
   } else {
     document.documentElement.style.setProperty('--bg','#f9f9f9');
     document.documentElement.style.setProperty('--card','#f1f3f6');
     document.documentElement.style.setProperty('--text','#1c1c1c');
     document.documentElement.style.setProperty('--muted','#555');
-    document.documentElement.style.setProperty('--accent',borderColor);
+    document.documentElement.style.setProperty('--accent',accent);
     document.querySelectorAll('input[type="text"]').forEach(i=>{i.style.background='#fff';i.style.color='#1c1c1c'});
   }
-  render(currentResults, document.getElementById('q').value);
+  render(searchResults(), document.getElementById('q').value);
 }
 applyTheme();
 
-// === Подсветка ===
+// === Highlight ===
 function highlight(text, query){
-  const q = norm(query).split(' ').filter(w=>w.length>2);
+  const q = (query||'').toLowerCase().replace(/[ё]/g,'е').split(' ').filter(w=>w.length>2);
   if(!q.length) return text;
   let out = text;
   q.forEach(w=>{
@@ -223,79 +219,58 @@ function highlight(text, query){
   return out;
 }
 
-// === Поиск ===
+// === Search ===
 function score(item, q){
-  const nq = norm(q);
+  const nq = (q||'').toLowerCase().replace(/[ё]/g,'е').trim();
   if(!nq) return 0;
   let s = 0;
   nq.split(' ').forEach(w=>{ if(w.length>2 && item._hay.includes(w)) s+=2; });
-  (item.tags||[]).forEach(t=>{ if(nq.includes(norm(t))) s+=1; });
-  (item.syn||[]).forEach(t=>{ if(nq.includes(norm(t))) s+=1.5; });
+  (item.tags||[]).forEach(t=>{ if(nq.includes(t.toLowerCase())) s+=1; });
+  (item.syn||[]).forEach(t=>{ if(nq.includes(t.toLowerCase())) s+=1.5; });
   if(item._hay.indexOf(nq)>=0) s+=3;
   return s;
 }
-
-let currentResults = DB;
-
+function searchResults(){
+  const q = document.getElementById('q').value;
+  if(!q) return DB;
+  const withScore = DB.map(x=>({...x, _s:score(x,q)})).filter(x=>x._s>0);
+  withScore.sort((a,b)=> b._s - a._s);
+  return withScore.slice(0,12);
+}
 function render(results, query){
-  currentResults = results.length? results : DB;
   const box = document.getElementById('results');
   const empty = document.getElementById('empty');
   box.innerHTML = '';
-  if(!results.length && query){ empty.style.display='block'; return; }
+  if(!results.length){ empty.style.display='block'; return; }
   empty.style.display='none';
-  currentResults.forEach(r=>{
+  results.forEach(r=>{
+    const pillColor = dark? 'rgba(255,255,255,.1)':'rgba(0,0,0,.05)';
     const el = document.createElement('div');
-    el.className = 'card';
-    el.innerHTML = `<div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-        <div class="pill" style="background:none;border:1px solid ${borderColor};color:var(--text)">Глава ${r.gl} · Статья ${r.art}</div>
-        <div class="pill" style="background:none;border:1px solid ${borderColor};color:var(--text)">Штраф: <span class="fine">${r.fine}</span></div>
-      </div>
-      <div style="font-weight:700;margin-bottom:6px;color:var(--text)">${highlight(r.title, query)}</div>
-      <div class="muted">${highlight(r.law, query)}</div>
-      ${r.tags?.length? `<div class="muted" style="margin-top:8px;font-size:12px">Теги: ${r.tags.map(t=>`#${t}`).join(' ')}</div>`:''}`;
+    el.className='card';
+    el.innerHTML=`
+    <div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+      <div class="pill" style="background:${pillColor}">Глава ${r.gl} · Статья ${r.art}</div>
+      <div class="pill" style="background:${pillColor}">Штраф: ${r.fine}</div>
+    </div>
+    <div style="font-weight:700;margin-bottom:6px">${highlight(r.title, query)}</div>
+    <div class="muted">${highlight(r.law, query)}</div>
+    ${r.tags?.length? `<div class="muted" style="margin-top:8px;font-size:12px">Теги: ${r.tags.map(t=>`#${t}`).join(' ')}</div>`:''}`;
     box.appendChild(el);
   });
 }
+document.getElementById('q').addEventListener('input', ()=>{render(searchResults(), document.getElementById('q').value);});
+document.getElementById('q').addEventListener('keydown', (e)=>{if(e.key==='Enter'){e.preventDefault(); render(searchResults(), document.getElementById('q').value)}});
 
-// === Авто-поиск ===
-const inp = document.getElementById('q');
-let t;
-inp.addEventListener('input', ()=>{ clearTimeout(t); t=setTimeout(()=>{ search(inp.value) }, 200); });
-inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); search(inp.value); }});
-
-function search(q){
-  const withScore = DB.map(x=>({...x,_s:score(x,q)})).filter(x=>q?x._s>0:true);
-  withScore.sort((a,b)=>b._s - a._s);
-  render(withScore,q);
-}
-
-// === Настройки панель ===
-const settingsPanel = document.getElementById('settingsPanel');
-document.getElementById('settingsBtn').onclick = ()=>settingsPanel.classList.add('show');
-document.getElementById('closeSettings').onclick = ()=>settingsPanel.classList.remove('show');
-
-document.getElementById('darkThemeBtn').onclick = ()=>{
-  dark = true;
-  localStorage.setItem('theme','dark');
-  applyTheme();
-};
-document.getElementById('lightThemeBtn').onclick = ()=>{
-  dark = false;
-  localStorage.setItem('theme','light');
-  applyTheme();
-};
-
-document.querySelectorAll('.colorOption button').forEach(btn=>{
-  btn.onclick = ()=>{
-    borderColor = btn.getAttribute('data-color');
-    localStorage.setItem('borderColor', borderColor);
-    applyTheme();
-  }
-});
-
-// === Инициализация поиска ===
-search('');
+// === Settings Panel ===
+const panel = document.getElementById('settingsPanel');
+document.getElementById('settingsBtn').onclick = ()=>{panel.style.display='flex'};
+document.getElementById('closeSettings').onclick = ()=>{panel.style.display='none'};
+document.querySelectorAll('input[name="theme"]').forEach(r=>{r.checked = dark?r.value==='dark':r.value==='light'; r.onchange=()=>{
+  dark = r.value==='dark'; localStorage.setItem('theme', r.value); applyTheme();
+}});
+document.querySelectorAll('.colorOption').forEach(c=>{c.onclick=()=>{
+  accent = c.dataset.color; localStorage.setItem('accent',accent); applyTheme();
+}});
 </script>
 
 </body>
