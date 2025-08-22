@@ -11,6 +11,7 @@
   --text:#e9eef5;
   --muted:#9fb0c3;
   --accent:#4ea1ff;
+  --accent-border:#4ea1ff;
 }
 body{
   margin:0;
@@ -23,69 +24,50 @@ h1{font-size:clamp(20px,3.5vw,32px);margin:0 0 10px}
 .sub{color:var(--muted);margin-bottom:18px}
 .searchBar{position:sticky;top:0;background:var(--bg);backdrop-filter: blur(8px); z-index:10; padding:12px 0 16px}
 .row{display:flex;gap:10px;align-items:center}
-input[type="text"]{
-  flex:1;padding:14px 14px;border:1px solid var(--accent);
-  border-radius:14px;color:var(--text);outline:none;
-  background:var(--card);
-}
-input::placeholder{color:var(--muted)}
+input[type="text"]{flex:1;padding:14px 14px;border:1px solid var(--accent-border);border-radius:14px;color:var(--text);outline:none;background:var(--card);}
+input::placeholder{color:#6a7a8b}
 .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
 @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
-.card{
-  background:var(--card);
-  border:1px solid var(--accent);
-  border-radius:16px;
-  padding:14px;
-  box-shadow:0 8px 24px rgba(0,0,0,.15)
-}
-.pill{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:6px 10px;border-radius:999px;
-  border:1px solid var(--accent);
-  color:var(--text);
-  background:var(--card);
-  font-size:12px
-}
+.card{background:var(--card);border:1px solid var(--accent-border);border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid var(--accent-border);background:none;font-size:12px;font-weight:700}
 .muted{color:var(--muted)}
 .fine{font-weight:700}
 .hl{background:rgba(78,161,255,.2); padding:0 .2em; border-radius:4px}
-.themeToggle{position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:10px;border:none;background:var(--accent);color:#001833;font-weight:700;cursor:pointer;}
 .nick{position:fixed;top:12px;left:12px;font-weight:700;color:var(--accent);font-size:16px;}
 .nick a{color:var(--accent);text-decoration:none;}
-.settingsPanel{
-  position:fixed;top:0;right:-260px;width:250px;height:100%;
-  background:var(--card);color:var(--text);padding:16px;
-  box-shadow:-4px 0 16px rgba(0,0,0,.3);
-  transition:right .3s;
-  z-index:20;
-}
-.settingsPanel.show{right:0}
-.settingsPanel h3{margin-top:0;margin-bottom:12px;font-size:18px}
-.settingsPanel label{display:block;margin-bottom:6px;font-size:14px}
-.settingsPanel input[type="radio"]{margin-right:6px}
-.settingsClose{
-  position:absolute;top:10px;right:10px;cursor:pointer;font-weight:bold;color:var(--accent)
-}
+.settingsBtn{position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:10px;border:none;background:var(--accent);color:#001833;font-weight:700;cursor:pointer;z-index:20}
+.settingsPanel{position:fixed;top:0;right:-300px;width:280px;height:100%;background:var(--card);box-shadow:-4px 0 20px rgba(0,0,0,.2);padding:16px;transition:0.3s;z-index:19}
+.settingsPanel.open{right:0;}
+.settingsPanel h2{margin-top:0;font-size:18px;color:var(--text);}
+.settingsPanel label{display:block;margin:12px 0 4px;color:var(--text);}
+.settingsPanel select{width:100%;padding:6px 10px;border-radius:8px;border:1px solid var(--accent-border);background:var(--card);color:var(--text);}
+.closePanel{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--text);font-size:18px;cursor:pointer;}
+.empty{border:1px dashed #334357;border-radius:14px;padding:14px;text-align:center;color:#9db0c6}
 </style>
 </head>
 <body>
 
 <div class="nick"><a href="https://vk.com/mamedovka" target="_blank">By Jamal Mamedov</a></div>
-<button class="themeToggle" id="settingsBtn">Настройки</button>
+<button class="settingsBtn" id="settingsBtn">⚙ Настройки</button>
 
 <div class="settingsPanel" id="settingsPanel">
-  <span class="settingsClose" id="settingsClose">✕</span>
-  <h3>Тема</h3>
-  <label><input type="radio" name="theme" value="dark" checked> Тёмная</label>
-  <label><input type="radio" name="theme" value="light"> Светлая</label>
-  <h3>Акцент</h3>
-  <label><input type="radio" name="accent" value="#4ea1ff" checked> Синий</label>
-  <label><input type="radio" name="accent" value="#00ffff"> Голубой</label>
-  <label><input type="radio" name="accent" value="#3cd69c"> Мятный</label>
-  <label><input type="radio" name="accent" value="#ff4e4e"> Красный</label>
-  <label><input type="radio" name="accent" value="#ff7bda"> Розовый</label>
-  <label><input type="radio" name="accent" value="#ffffff"> Белый</label>
-  <label><input type="radio" name="accent" value="#000000"> Чёрный (для светлой темы)</label>
+  <button class="closePanel" id="closePanel">&times;</button>
+  <h2>Настройки</h2>
+  <label for="themeSelect">Тема</label>
+  <select id="themeSelect">
+    <option value="dark">Тёмная</option>
+    <option value="light">Светлая</option>
+  </select>
+  <label for="accentSelect">Цвет акцента</label>
+  <select id="accentSelect">
+    <option value="#4ea1ff">Синий</option>
+    <option value="#00cfff">Голубой</option>
+    <option value="#2be8a7">Мятный</option>
+    <option value="#ff4e4e">Красный</option>
+    <option value="#ff77cc">Розовый</option>
+    <option value="#ffffff">Белый</option>
+    <option value="#1c1c1c">Черный</option>
+  </select>
 </div>
 
 <div class="wrap">
@@ -101,52 +83,51 @@ input::placeholder{color:var(--muted)}
 </div>
 
 <script>
-// === Настройки темы и акцента ===
-let dark = true;
-let accent = '#4ea1ff';
+// === Настройки с localStorage ===
+let theme = localStorage.getItem('theme') || 'dark';
+let accent = localStorage.getItem('accent') || '#4ea1ff';
 
-function applyTheme(){
-  if(dark){
-    document.documentElement.style.setProperty('--bg','#0b0d10');
-    document.documentElement.style.setProperty('--card','#12151a');
-    document.documentElement.style.setProperty('--text','#e9eef5');
-    document.documentElement.style.setProperty('--muted','#9fb0c3');
-  } else {
-    document.documentElement.style.setProperty('--bg','#f9f9f9');
-    document.documentElement.style.setProperty('--card','#f1f3f6');
-    document.documentElement.style.setProperty('--text','#1c1c1c');
-    document.documentElement.style.setProperty('--muted','#555');
-  }
+const applySettings = ()=>{
+  const dark = theme==='dark';
+  document.documentElement.style.setProperty('--bg', dark?'#0b0d10':'#f9f9f9');
+  document.documentElement.style.setProperty('--card', dark?'#12151a':'#f1f3f6');
+  document.documentElement.style.setProperty('--text', dark?'#e9eef5':'#1c1c1c');
+  document.documentElement.style.setProperty('--muted', dark?'#9fb0c3':'#555');
   document.documentElement.style.setProperty('--accent', accent);
+  document.documentElement.style.setProperty('--accent-border', accent);
   document.querySelectorAll('input[type="text"]').forEach(i=>{
-    i.style.background = dark? '#12151a':'#fff';
-    i.style.color = dark? '#e9eef5':'#1c1c1c';
-    i.style.borderColor = accent;
+    i.style.background = dark?'#12151a':'#fff';
+    i.style.color = dark?'#e9eef5':'#1c1c1c';
   });
-}
-applyTheme();
-
-document.getElementById('settingsBtn').onclick = ()=>{
-  document.getElementById('settingsPanel').classList.add('show');
+  document.querySelectorAll('.pill').forEach(p=>{
+    p.style.borderColor = accent;
+    p.style.color = dark?'#fff':'#000';
+  });
 };
-document.getElementById('settingsClose').onclick = ()=>{
-  document.getElementById('settingsPanel').classList.remove('show');
-};
+applySettings();
 
-document.querySelectorAll('input[name="theme"]').forEach(r=>{
-  r.addEventListener('change', e=>{
-    dark = e.target.value==='dark';
-    applyTheme();
-    render(currentResults, document.getElementById('q').value);
-  });
+// === Панель настроек ===
+const panel = document.getElementById('settingsPanel');
+document.getElementById('settingsBtn').onclick = ()=>{ panel.classList.add('open'); };
+document.getElementById('closePanel').onclick = ()=>{ panel.classList.remove('open'); };
+document.addEventListener('click', e=>{
+  if(!panel.contains(e.target)&&!document.getElementById('settingsBtn').contains(e.target)){
+    panel.classList.remove('open');
+  }
 });
-document.querySelectorAll('input[name="accent"]').forEach(r=>{
-  r.addEventListener('change', e=>{
-    accent = e.target.value;
-    applyTheme();
-    render(currentResults, document.getElementById('q').value);
-  });
-});
+document.getElementById('themeSelect').value = theme;
+document.getElementById('accentSelect').value = accent;
+
+document.getElementById('themeSelect').onchange = (e)=>{
+  theme = e.target.value;
+  localStorage.setItem('theme', theme);
+  applySettings();
+};
+document.getElementById('accentSelect').onchange = (e)=>{
+  accent = e.target.value;
+  localStorage.setItem('accent', accent);
+  applySettings();
+};
 
 // === Подсветка ===
 const norm = s => (s||"").toLowerCase().replace(/[ё]/g,'е').replace(/[^a-zA-Zа-яА-Я0-9+ ]+/g,' ').replace(/\s+/g,' ').trim();
@@ -265,9 +246,7 @@ const DB = [
   {gl:'19', art:'19.5', title:'Попрошайничество', law:'Занятие попрошайничеством в общественных местах.', fine:'Предупреждение или арест 10 суток', tags:['попрошайничество']},
   {gl:'19', art:'19.6', title:'Предпринимательство без регистрации/лицензии', law:'Деятельность без регистрации/лицензии при обязательности.', fine:'100 000 ₽', tags:['предпринимательство']}
 ];
-DB.forEach(x=>{x._hay = norm([x.title, x.law, (x.tags||[]).join(' '), (x.syn||[]).join(' ')].join(' '));});
-
-let currentResults = DB;
+DB.forEach(x=>{ x._hay = norm([x.title, x.law, (x.tags||[]).join(' '), (x.syn||[]).join(' ')].join(' ')); });
 
 // === Поиск ===
 function score(item, q){
@@ -294,7 +273,7 @@ function render(results, query){
         <div class="pill">Глава ${r.gl} · Статья ${r.art}</div>
         <div class="pill">Штраф: <span class="fine">${r.fine}</span></div>
       </div>
-      <div style="font-weight:700;margin-bottom:6px;color:var(--text)">${highlight(r.title, query)}</div>
+      <div style="font-weight:700;margin-bottom:6px">${highlight(r.title, query)}</div>
       <div class="muted">${highlight(r.law, query)}</div>
       ${r.tags?.length? `<div class="muted" style="margin-top:8px;font-size:12px">Теги: ${r.tags.map(t=>`#${t}`).join(' ')}</div>`:''}`;
     box.appendChild(el);
@@ -304,19 +283,18 @@ function render(results, query){
 function search(){
   const q = document.getElementById('q').value;
   let withScore;
-  if(q.trim()===''){
-    withScore = DB;
+  if(!q.trim()){ 
+    withScore = DB; // показываем все
   } else {
     withScore = DB.map(x=>({...x, _s:score(x,q)})).filter(x=>x._s>0);
     withScore.sort((a,b)=> b._s - a._s);
   }
-  currentResults = withScore;
   render(withScore, q);
 }
 
 const inp = document.getElementById('q');
 let t;
-inp.addEventListener('input', ()=>{ clearTimeout(t); t = setTimeout(search, 150); });
+inp.addEventListener('input', ()=>{ clearTimeout(t); t = setTimeout(search, 200); });
 inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); search(); }});
 
 // Инициализация
