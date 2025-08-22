@@ -27,7 +27,7 @@
     input::placeholder{color:#6a7a8b}
     button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);color:#001833;font-weight:700;cursor:pointer}
     .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
-    min-width:720px{.grid{grid-template-columns:1fr 1fr}}
+    @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
     .card{background:var(--card);border:1px solid #1b212a;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
     .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid #293342;color:#cfe1ff;background:#0e141d;font-size:12px}
     .muted{color:#9db0c6}
@@ -73,9 +73,7 @@ function highlight(text, query){
   q.forEach(w=>{
     const re = new RegExp(`(${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,'gi');
     out = out.replace(re,'<span class="hl">$1</span>');
-
-
-});
+  });
   return out;
 }
 
