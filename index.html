@@ -108,16 +108,27 @@ applySettings();
 
 // === Панель настроек ===
 const panel = document.getElementById('settingsPanel');
-document.getElementById('settingsBtn').onclick = ()=>{ panel.classList.add('open'); };
-document.getElementById('closePanel').onclick = (e)=>{
-  e.stopPropagation(); // предотвращаем срабатывание глобального клика
-  panel.classList.remove('open');
+const settingsBtn = document.getElementById('settingsBtn');
+
+settingsBtn.onclick = ()=>{
+  panel.classList.add('open');
+  settingsBtn.style.display = 'none'; // скрываем кнопку
 };
+
+document.getElementById('closePanel').onclick = (e)=>{
+  e.stopPropagation();
+  panel.classList.remove('open');
+  settingsBtn.style.display = 'block'; // возвращаем кнопку
+};
+
+// клик вне панели
 document.addEventListener('click', e=>{
-  if(!panel.contains(e.target)&&!document.getElementById('settingsBtn').contains(e.target)){
+  if(!panel.contains(e.target) && e.target!==settingsBtn){
     panel.classList.remove('open');
+    settingsBtn.style.display = 'block';
   }
 });
+
 document.getElementById('themeSelect').value = theme;
 document.getElementById('accentSelect').value = accent;
 
