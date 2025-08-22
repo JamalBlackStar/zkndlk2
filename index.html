@@ -3,46 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Кодекс ПДД — Поисковик</title>
+<title>КОДЕКС ОБ АДМИНИСТРАТИВНЫХ НАРУШЕНИЯХ РЕСПУБЛИКИ ПРОВИНЦИИ</title>
 <style>
 :root {
-  --bg:#0b0d10; 
-  --card:#12151a; 
-  --text:#e9eef5; 
-  --muted:#9fb0c3; 
-  --accent:#4ea1ff;
+  --bg:#0b0d10; --card:#12151a; --text:#e9eef5; --muted:#9fb0c3; --accent:#4ea1ff;
 }
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
-  background:var(--bg);
-  color:var(--text);
-}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;background:var(--bg);color:var(--text);}
 .wrap{max-width:920px;margin:0 auto;padding:24px}
 h1{font-size:clamp(20px,3.5vw,32px);margin:0 0 10px}
 .sub{color:var(--muted);margin-bottom:18px}
-.searchBar{position:sticky;top:0;background:var(--bg);backdrop-filter: blur(8px); z-index:10; padding:12px 0 16px}
+.searchBar{position:sticky;top:0;background:linear-gradient(180deg,rgba(11,13,16,.9),rgba(11,13,16,.7));backdrop-filter: blur(8px); z-index:10; padding:12px 0 16px}
 .row{display:flex;gap:10px;align-items:center}
 input[type="text"]{flex:1;padding:14px 14px;border:1px solid #263142;background:#0f1318;border-radius:14px;color:var(--text);outline:none}
 input::placeholder{color:#6a7a8b}
 button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);color:#001833;font-weight:700;cursor:pointer}
 .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
 @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
-.card{background:var(--card);border:1px solid #1b212a;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.card{background:var(--card);border:1px solid #1b212a;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid #293342;color:#cfe1ff;background:#0e141d;font-size:12px}
-.muted{color:var(--muted)}
+.muted{color:#9db0c6}
 .fine{font-weight:700}
 .hl{background:rgba(78,161,255,.2); padding:0 .2em; border-radius:4px}
-.footer{opacity:.75; font-size:12px; margin-top:14px}
+.footer{opacity:.75; font-size:12px; margin-top:14px; text-align:right;}
 .empty{border:1px dashed #334357;border-radius:14px;padding:14px;text-align:center;color:#9db0c6}
 .themeToggle{position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:10px;border:none;background:#4ea1ff;color:#001833;font-weight:700;cursor:pointer;}
 .nick{position:fixed;top:12px;left:12px;font-weight:700;color:#4ea1ff;font-size:16px;}
-.nick a{color:#4ea1ff;text-decoration:none;}
 </style>
 </head>
 <body>
 
-<div class="nick"><a href="https://vk.com/mamedovka" target="_blank">By Jamal Mamedov</a></div>
+<div class="nick"><a href="https://vk.com/mamedovka" target="_blank" style="color:#4ea1ff; text-decoration:none;">By Jamal Mamedov</a></div>
 <button class="themeToggle" id="themeBtn">Сменить тему</button>
 
 <div class="wrap">
@@ -56,36 +46,26 @@ button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);co
   </div>
   <div id="results" class="grid"></div>
   <div id="empty" class="empty" style="display:none">Ничего не найдено.</div>
-  <div class="footer muted">Прототип работает полностью локально (HTML+JS).</div>
+  <div class="footer muted">By <a href="https://vk.com/mamedovka" target="_blank">Jamal Mamedov</a></div>
 </div>
 
 <script>
 // === Тема ===
 let dark = true;
-function applyTheme(){
+document.getElementById('themeBtn').onclick = ()=>{
+  dark = !dark;
   if(dark){
     document.documentElement.style.setProperty('--bg','#0b0d10');
     document.documentElement.style.setProperty('--card','#12151a');
     document.documentElement.style.setProperty('--text','#e9eef5');
     document.documentElement.style.setProperty('--muted','#9fb0c3');
-    document.documentElement.style.setProperty('--accent','#4ea1ff');
-    document.querySelectorAll('input[type="text"]').forEach(i=>i.style.background='#0f1318');
-    document.querySelectorAll('input[type="text"]').forEach(i=>i.style.color='#e9eef5');
   } else {
     document.documentElement.style.setProperty('--bg','#f9f9f9');
-    document.documentElement.style.setProperty('--card','#f1f3f6');
-    document.documentElement.style.setProperty('--text','#1c1c1c');
-    document.documentElement.style.setProperty('--muted','#555');
-    document.documentElement.style.setProperty('--accent','#4ea1ff');
-    document.querySelectorAll('input[type="text"]').forEach(i=>i.style.background='#fff');
-    document.querySelectorAll('input[type="text"]').forEach(i=>i.style.color='#1c1c1c');
+    document.documentElement.style.setProperty('--card','#ffffff');
+    document.documentElement.style.setProperty('--text','#333333');
+    document.documentElement.style.setProperty('--muted','#777777');
   }
-}
-document.getElementById('themeBtn').onclick = ()=>{
-  dark = !dark;
-  applyTheme();
 };
-applyTheme();
 
 // === Подсветка ===
 const norm = s => (s||"").toLowerCase().replace(/[ё]/g,'е').replace(/[^a-zA-Zа-яА-Я0-9+ ]+/g,' ').replace(/\s+/g,' ').trim();
@@ -100,7 +80,7 @@ function highlight(text, query){
   return out;
 }
 
-// === Пример DB, можно добавить свои статьи ===
+// === База данных ===
 const DB = [
   // Глава 5
   {gl:'5', art:'5.1', title:'Управление без документов', law:'Управление ТС без документов (см. 2.1.1 ПДД).', fine:'20 000 ₽', tags:['документы','водитель','2.1.1'], syn:['нет документов','без документов','забыл права','нет страховки при себе','нет св-ва о регистрации при себе']},
@@ -243,15 +223,21 @@ function render(results, query){
 }
 
 function search(){
-  const q = document.getElementById('q').value;
-  const withScore = DB.map(x=>({...x, _s:score(x,q)})).filter(x=>x._s>0);
-  withScore.sort((a,b)=> b._s - a._s);
-  render(withScore.slice(0, 12), q);
+  const q = document.getElementById('q').value.trim();
+  let results;
+  if(!q){
+    results = [...DB]; // показываем все статьи если пусто
+  } else {
+    results = DB.map(x=>({...x, _s:score(x,q)})).filter(x=>x._s>0);
+    results.sort((a,b)=> b._s - a._s);
+  }
+  render(results.slice(0, 12), q);
 }
 
-document.getElementById('btn').addEventListener('click', search);
-let t;
+const btn = document.getElementById('btn');
 const inp = document.getElementById('q');
+btn.addEventListener('click', search);
+let t;
 inp.addEventListener('input', ()=>{ clearTimeout(t); t = setTimeout(search, 220); });
 inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); search(); }});
 </script>
