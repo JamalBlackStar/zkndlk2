@@ -25,44 +25,44 @@ h1{font-size:clamp(20px,3.5vw,32px);margin:0 0 10px}
 .row{display:flex;gap:10px;align-items:center}
 input[type="text"]{flex:1;padding:14px 14px;border:1px solid #263142;background:#0f1318;border-radius:14px;color:var(--text);outline:none}
 input::placeholder{color:#6a7a8b}
-button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);color:#001833;font-weight:700;cursor:pointer}
 .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
 @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
-.card{background:var(--card);border:1px solid #1b212a;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.15)}
-.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid var(--accent);color:var(--text);font-size:12px}
+.card{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.15);display:flex;flex-direction:column}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-size:12px}
 .muted{color:var(--muted)}
-.fine,.glart{font-weight:700}
+.fine{font-weight:700}
 .hl{background:rgba(78,161,255,.2); padding:0 .2em; border-radius:4px}
 .themeToggle{position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:10px;border:none;background:#4ea1ff;color:#001833;font-weight:700;cursor:pointer;}
 .nick{position:fixed;top:12px;left:12px;font-weight:700;color:#4ea1ff;font-size:16px;}
-.settingsPanel{position:fixed;top:0;right:-260px;width:260px;height:100%;background:var(--card);box-shadow:-4px 0 24px rgba(0,0,0,.3);padding:20px;transition:right .3s;overflow-y:auto;z-index:20;}
-.settingsPanel.active{right:0;}
-.settingsPanel h2{margin-top:0;font-size:18px;color:var(--text);}
-.settingsPanel label{display:block;margin:12px 0 4px;color:var(--text);}
-.colorOption{display:inline-block;width:24px;height:24px;margin:4px;border-radius:50%;cursor:pointer;border:2px solid #fff;}
+.nick a{color:#4ea1ff;text-decoration:none;}
+.settingsPanel{position:fixed;top:0;right:-280px;width:280px;height:100%;background:var(--card);box-shadow:-4px 0 12px rgba(0,0,0,.3);transition:right .3s;z-index:100;display:flex;flex-direction:column;padding:20px;gap:12px}
+.settingsPanel.show{right:0}
+.closeSettings{align-self:flex-end;cursor:pointer;font-weight:700;color:var(--muted)}
+.colorOption{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.colorOption button{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer}
 </style>
 </head>
 <body>
 
 <div class="nick"><a href="https://vk.com/mamedovka" target="_blank">By Jamal Mamedov</a></div>
-<button class="themeToggle" id="settingsBtn">Настройки</button>
+<button class="themeToggle" id="settingsBtn">⚙ Настройки</button>
 
 <div class="settingsPanel" id="settingsPanel">
-  <h2>Настройки</h2>
-  <label>Тема</label>
-  <select id="themeSelect">
-    <option value="dark">Тёмная</option>
-    <option value="light">Светлая</option>
-  </select>
-  <label>Цвет акцента</label>
-  <div id="colorPicker">
-    <span class="colorOption" data-color="#4ea1ff" style="background:#4ea1ff"></span>
-    <span class="colorOption" data-color="#00d4ff" style="background:#00d4ff"></span>
-    <span class="colorOption" data-color="#00ffb3" style="background:#00ffb3"></span>
-    <span class="colorOption" data-color="#ff3b3b" style="background:#ff3b3b"></span>
-    <span class="colorOption" data-color="#ff7ecb" style="background:#ff7ecb"></span>
-    <span class="colorOption" data-color="#ffffff" style="background:#ffffff; border:1px solid #000"></span>
-    <span class="colorOption" data-color="#000000" style="background:#000000; border:1px solid #fff"></span>
+  <div class="closeSettings" id="closeSettings">✕ Закрыть</div>
+  <div><strong>Тема:</strong></div>
+  <div>
+    <button id="darkThemeBtn">Тёмная</button>
+    <button id="lightThemeBtn">Светлая</button>
+  </div>
+  <div><strong>Цвет обводки карточек:</strong></div>
+  <div class="colorOption">
+    <button data-color="#4ea1ff" style="background:#4ea1ff"></button>
+    <button data-color="#00ffff" style="background:#00ffff"></button>
+    <button data-color="#3eb489" style="background:#3eb489"></button>
+    <button data-color="#ff4e4e" style="background:#ff4e4e"></button>
+    <button data-color="#ff69b4" style="background:#ff69b4"></button>
+    <button data-color="#ffffff" style="background:#ffffff"></button>
+    <button data-color="#000000" style="background:#000000"></button>
   </div>
 </div>
 
@@ -72,7 +72,6 @@ button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);co
     <div class="sub">Вводи ситуацию своими словами: «проехал на красный», «без документов» и т.д.</div>
     <div class="row">
       <input id="q" type="text" placeholder="Например: проезд на красный / без документов / превышение 40" />
-      <button id="btn">Найти</button>
     </div>
   </div>
   <div id="results" class="grid"></div>
@@ -80,59 +79,6 @@ button{padding:14px 18px;border:0;border-radius:12px;background:var(--accent);co
 </div>
 
 <script>
-// === Настройки темы и цвета ===
-let dark = true;
-let accent = '#4ea1ff';
-
-function applyTheme(){
-  if(dark){
-    document.documentElement.style.setProperty('--bg','#0b0d10');
-    document.documentElement.style.setProperty('--card','#12151a');
-    document.documentElement.style.setProperty('--text','#e9eef5');
-    document.documentElement.style.setProperty('--muted','#9fb0c3');
-    document.documentElement.style.setProperty('--accent',accent);
-    document.querySelectorAll('input[type="text"]').forEach(i=>{i.style.background='#0f1318';i.style.color='#e9eef5'});
-  } else {
-    document.documentElement.style.setProperty('--bg','#f9f9f9');
-    document.documentElement.style.setProperty('--card','#f1f3f6');
-    document.documentElement.style.setProperty('--text','#1c1c1c');
-    document.documentElement.style.setProperty('--muted','#555');
-    document.documentElement.style.setProperty('--accent',accent);
-    document.querySelectorAll('input[type="text"]').forEach(i=>{i.style.background='#fff';i.style.color='#1c1c1c'});
-  }
-  render(currentResults, currentQuery);
-}
-
-document.getElementById('settingsBtn').onclick = ()=>{
-  document.getElementById('settingsPanel').classList.toggle('active');
-};
-
-document.getElementById('themeSelect').addEventListener('change', e=>{
-  dark = e.target.value==='dark';
-  applyTheme();
-});
-
-document.querySelectorAll('.colorOption').forEach(el=>{
-  el.addEventListener('click', ()=>{
-    accent = el.getAttribute('data-color');
-    applyTheme();
-  });
-});
-
-// === Подсветка ===
-const norm = s => (s||"").toLowerCase().replace(/[ё]/g,'е').replace(/[^a-zA-Zа-яА-Я0-9+ ]+/g,' ').replace(/\s+/g,' ').trim();
-function highlight(text, query){
-  const q = norm(query).split(' ').filter(w=>w.length>2);
-  if(!q.length) return text;
-  let out = text;
-  q.forEach(w=>{
-    const re = new RegExp(`(${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,'gi');
-    out = out.replace(re,'<span class="hl">$1</span>');
-  });
-  return out;
-}
-
-// === DB ===
 const DB = [
   // Глава 5
   {gl:'5', art:'5.1', title:'Управление без документов', law:'Управление ТС без документов (см. 2.1.1 ПДД).', fine:'20 000 ₽', tags:['документы','водитель','2.1.1'], syn:['нет документов','без документов','забыл права','нет страховки при себе','нет св-ва о регистрации при себе']},
@@ -237,10 +183,45 @@ const DB = [
   {gl:'19', art:'19.6', title:'Предпринимательство без регистрации/лицензии', law:'Деятельность без регистрации/лицензии при обязательности.', fine:'100 000 ₽', tags:['предпринимательство']}
 ];
 
-DB.forEach(x=>{ x._hay = norm([x.title, x.law, (x.tags||[]).join(' '), (x.syn||[]).join(' ')].join(' ')) });
+// === Нормализация ===
+const norm = s => (s||"").toLowerCase().replace(/[ё]/g,'е').replace(/[^a-zA-Zа-яА-Я0-9+ ]+/g,' ').replace(/\s+/g,' ').trim();
+DB.forEach(x=>{ x._hay = norm([x.title, x.law, (x.tags||[]).join(' '), (x.syn||[]).join(' ')].join(' ')); });
 
-let currentResults = [];
-let currentQuery = '';
+// === Настройки ===
+let dark = localStorage.getItem('theme')==='dark' || true;
+let borderColor = localStorage.getItem('borderColor') || '#4ea1ff';
+
+function applyTheme(){
+  if(dark){
+    document.documentElement.style.setProperty('--bg','#0b0d10');
+    document.documentElement.style.setProperty('--card','#12151a');
+    document.documentElement.style.setProperty('--text','#e9eef5');
+    document.documentElement.style.setProperty('--muted','#9fb0c3');
+    document.documentElement.style.setProperty('--accent',borderColor);
+    document.querySelectorAll('input[type="text"]').forEach(i=>{i.style.background='#0f1318';i.style.color='#e9eef5'});
+  } else {
+    document.documentElement.style.setProperty('--bg','#f9f9f9');
+    document.documentElement.style.setProperty('--card','#f1f3f6');
+    document.documentElement.style.setProperty('--text','#1c1c1c');
+    document.documentElement.style.setProperty('--muted','#555');
+    document.documentElement.style.setProperty('--accent',borderColor);
+    document.querySelectorAll('input[type="text"]').forEach(i=>{i.style.background='#fff';i.style.color='#1c1c1c'});
+  }
+  render(currentResults, document.getElementById('q').value);
+}
+applyTheme();
+
+// === Подсветка ===
+function highlight(text, query){
+  const q = norm(query).split(' ').filter(w=>w.length>2);
+  if(!q.length) return text;
+  let out = text;
+  q.forEach(w=>{
+    const re = new RegExp(`(${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,'gi');
+    out = out.replace(re,'<span class="hl">$1</span>');
+  });
+  return out;
+}
 
 // === Поиск ===
 function score(item, q){
@@ -254,43 +235,67 @@ function score(item, q){
   return s;
 }
 
+let currentResults = DB;
+
 function render(results, query){
+  currentResults = results.length? results : DB;
   const box = document.getElementById('results');
   const empty = document.getElementById('empty');
-  currentResults = results;
-  currentQuery = query;
   box.innerHTML = '';
-  if(!results.length){ empty.style.display='block'; return; }
+  if(!results.length && query){ empty.style.display='block'; return; }
   empty.style.display='none';
-  results.forEach(r=>{
+  currentResults.forEach(r=>{
     const el = document.createElement('div');
     el.className = 'card';
     el.innerHTML = `<div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-        <div class="pill glart" style="border-color:${accent}; color:${dark?'#fff':'#000'}">Глава ${r.gl} · Статья ${r.art}</div>
-        <div class="pill fine" style="border-color:${accent}; color:${dark?'#fff':'#000'}">Штраф: ${r.fine}</div>
+        <div class="pill" style="background:none;border:1px solid ${borderColor};color:var(--text)">Глава ${r.gl} · Статья ${r.art}</div>
+        <div class="pill" style="background:none;border:1px solid ${borderColor};color:var(--text)">Штраф: <span class="fine">${r.fine}</span></div>
       </div>
-      <div style="font-weight:700;margin-bottom:6px">${highlight(r.title, query)}</div>
+      <div style="font-weight:700;margin-bottom:6px;color:var(--text)">${highlight(r.title, query)}</div>
       <div class="muted">${highlight(r.law, query)}</div>
       ${r.tags?.length? `<div class="muted" style="margin-top:8px;font-size:12px">Теги: ${r.tags.map(t=>`#${t}`).join(' ')}</div>`:''}`;
     box.appendChild(el);
   });
 }
 
-function search(){
-  const q = document.getElementById('q').value;
-  const withScore = DB.map(x=>({...x, _s:score(x,q)})).filter(x=>q? x._s>0 : true);
-  if(q) withScore.sort((a,b)=> b._s - a._s);
-  render(withScore.slice(0, 12), q);
+// === Авто-поиск ===
+const inp = document.getElementById('q');
+let t;
+inp.addEventListener('input', ()=>{ clearTimeout(t); t=setTimeout(()=>{ search(inp.value) }, 200); });
+inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); search(inp.value); }});
+
+function search(q){
+  const withScore = DB.map(x=>({...x,_s:score(x,q)})).filter(x=>q?x._s>0:true);
+  withScore.sort((a,b)=>b._s - a._s);
+  render(withScore,q);
 }
 
-document.getElementById('btn').addEventListener('click', search);
-let t;
-const inp = document.getElementById('q');
-inp.addEventListener('input', ()=>{ clearTimeout(t); t = setTimeout(search, 220); });
-inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); search(); }});
+// === Настройки панель ===
+const settingsPanel = document.getElementById('settingsPanel');
+document.getElementById('settingsBtn').onclick = ()=>settingsPanel.classList.add('show');
+document.getElementById('closeSettings').onclick = ()=>settingsPanel.classList.remove('show');
 
-applyTheme();
-search();
+document.getElementById('darkThemeBtn').onclick = ()=>{
+  dark = true;
+  localStorage.setItem('theme','dark');
+  applyTheme();
+};
+document.getElementById('lightThemeBtn').onclick = ()=>{
+  dark = false;
+  localStorage.setItem('theme','light');
+  applyTheme();
+};
+
+document.querySelectorAll('.colorOption button').forEach(btn=>{
+  btn.onclick = ()=>{
+    borderColor = btn.getAttribute('data-color');
+    localStorage.setItem('borderColor', borderColor);
+    applyTheme();
+  }
+});
+
+// === Инициализация поиска ===
+search('');
 </script>
 
 </body>
