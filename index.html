@@ -109,7 +109,10 @@ applySettings();
 // === Панель настроек ===
 const panel = document.getElementById('settingsPanel');
 document.getElementById('settingsBtn').onclick = ()=>{ panel.classList.add('open'); };
-document.getElementById('closePanel').onclick = ()=>{ panel.classList.remove('open'); };
+document.getElementById('closePanel').onclick = (e)=>{
+  e.stopPropagation(); // предотвращаем срабатывание глобального клика
+  panel.classList.remove('open');
+};
 document.addEventListener('click', e=>{
   if(!panel.contains(e.target)&&!document.getElementById('settingsBtn').contains(e.target)){
     panel.classList.remove('open');
@@ -284,7 +287,7 @@ function search(){
   const q = document.getElementById('q').value;
   let withScore;
   if(!q.trim()){ 
-    withScore = DB; // показываем все
+    withScore = DB;
   } else {
     withScore = DB.map(x=>({...x, _s:score(x,q)})).filter(x=>x._s>0);
     withScore.sort((a,b)=> b._s - a._s);
