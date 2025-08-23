@@ -1,0 +1,74 @@
+.calcPanel {
+  position: fixed;
+  top: 80px;
+  left: 12px;
+  width: 250px;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--card);
+  border: 1px solid var(--accent-border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pill.kpi {
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.clearBtn {
+  text-align: center;
+  padding: 8px;
+  background: var(--accent);
+  border-radius: 10px;
+  color: var(--bg);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.clearBtn:hover {
+  background: var(--accent-border);
+}
+
+.violationList {
+  margin-top: 20px;
+  padding: 12px;
+  border: 1px solid var(--accent-border);
+  border-radius: 12px;
+  background: var(--card);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.violationItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  background: var(--card);
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--accent-border);
+}
+
+.violationItem span {
+  color: var(--text);
+}
+
+.violationItem button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.violationItem button:hover {
+  color: var(--accent-border);
+}
