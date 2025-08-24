@@ -3,28 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Поисковик законов</title>
+<title>Поисковик законов + Калькулятор</title>
 <style>
 :root {
-  --bg:#0b0d10;
-  --card:#12151a;
-  --text:#e9eef5;
-  --muted:#9fb0c3;
-  --accent:#4ea1ff;
-  --accent-border:#4ea1ff;
+  --bg:#0b0d10; --card:#12151a; --text:#e9eef5; --muted:#9fb0c3; --accent:#4ea1ff; --accent-border:#4ea1ff;
 }
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
-  background:var(--bg);
-  color:var(--text);
-}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;background:var(--bg);color:var(--text);}
 .wrap{max-width:920px;margin:0 auto;padding:24px}
 h1{font-size:clamp(20px,3.5vw,32px);margin:0 0 10px}
 .sub{color:var(--muted);margin-bottom:18px}
-.searchBar{position:sticky;top:0;background:var(--bg);backdrop-filter: blur(8px); z-index:10; padding:12px 0 16px}
+.searchBar{position:sticky;top:0;background:var(--bg);backdrop-filter: blur(8px);z-index:10;padding:12px 0 16px}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-input[type="text"]{flex:1;padding:14px 14px;border:1px solid var(--accent-border);border-radius:14px;color:var(--text);outline:none;background:var(--card);}
+input[type="text"]{flex:1;padding:14px;border:1px solid var(--accent-border);border-radius:14px;color:var(--text);outline:none;background:var(--card);}
 input::placeholder{color:#6a7a8b}
 select{padding:10px;border-radius:10px;border:1px solid var(--accent-border);background:var(--card);color:var(--text);cursor:pointer}
 .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
@@ -35,76 +25,38 @@ select{padding:10px;border-radius:10px;border:1px solid var(--accent-border);bac
 .muted{color:var(--muted)}
 .fine{font-weight:700}
 .hl{background:rgba(78,161,255,.2); padding:0 .2em; border-radius:4px}
-.nick{position:fixed;top:12px;left:12px;font-weight:700;color:var(--accent);font-size:16px;}
-.nick a{color:var(--accent);text-decoration:none;}
-.settingsBtn{
-  position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:10px;border:none;background:var(--accent);color:#001833;font-weight:700;cursor:pointer;z-index:20;
-  transition: opacity 0.3s ease;
-}
-.settingsBtn.hidden{opacity:0;pointer-events:none;}
-.settingsPanel{
-  position:fixed;top:0;right:-300px;width:280px;height:100%;background:var(--card);
-  box-shadow:-4px 0 20px rgba(0,0,0,.2);padding:16px;transition:right 0.3s ease, opacity 0.3s ease;z-index:21;opacity:0;
-}
-.settingsPanel.open{right:0;opacity:1;}
-.settingsPanel h2{margin-top:0;font-size:18px;color:var(--text);}
-.settingsPanel label{display:block;margin:12px 0 4px;color:var(--text);}
-.settingsPanel select{width:100%;padding:6px 10px;border-radius:8px;border:1px solid var(--accent-border);background:var(--card);color:var(--text);}
-.closePanel{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--text);font-size:18px;cursor:pointer;}
-.empty{border:1px dashed #334357;border-radius:14px;padding:14px;text-align:center;color:#9db0c6}
-
-/* --- Минимальные стили вкладок и калькулятора (в твоём стиле) --- */
 .tabs{display:flex;gap:8px;align-items:center;margin-bottom:8px;position:sticky;top:0;background:var(--bg);z-index:11;padding-top:8px}
 .tabBtn{transition:transform .1s ease}
 .tabBtn.active{background:rgba(78,161,255,.15)}
 .tabBtn.btn{cursor:pointer}
-.plus{line-height:1;padding:4px 10px}
-.calcPanel{margin-top:16px}
+.calcPanel{margin-top:16px;padding:14px;border-radius:16px;background:var(--card);border:1px solid var(--accent-border)}
 .calcRow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .kpi{display:inline-flex;gap:6px;align-items:center}
-.clearBtn{margin-left:auto}
+.clearBtn{margin-left:auto;cursor:pointer;padding:6px 10px;background:var(--accent);border-radius:10px;color:#001833;font-weight:700}
+.clearBtn:hover{background:var(--accent-border)}
+.violationList{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.violationItem{display:flex;justify-content:space-between;align-items:center;padding:8px;border:1px solid var(--accent-border);border-radius:10px;background:var(--card)}
+.violationItem span{color:var(--text)}
+.violationItem button{background:none;border:none;color:var(--accent);font-size:16px;cursor:pointer}
+.violationItem button:hover{color:var(--accent-border)}
 </style>
 </head>
 <body>
 
-<div class="nick"><a href="https://vk.com/mamedovka" target="_blank">By Jamal Mamedov</a></div>
-<button class="settingsBtn" id="settingsBtn">⚙ Настройки</button>
-
-<div class="settingsPanel" id="settingsPanel">
-  <button class="closePanel" id="closePanel">&times;</button>
-  <h2>Настройки</h2>
-  <label for="themeSelect">Тема</label>
-  <select id="themeSelect">
-    <option value="dark">Тёмная</option>
-    <option value="light">Светлая</option>
-  </select>
-  <label for="accentSelect">Цвет акцента</label>
-  <select id="accentSelect">
-    <option value="#4ea1ff">Синий</option>
-    <option value="#00cfff">Голубой</option>
-    <option value="#2be8a7">Мятный</option>
-    <option value="#ff4e4e">Красный</option>
-    <option value="#ff77cc">Розовый</option>
-    <option value="#ffffff">Белый</option>
-    <option value="#1c1c1c">Черный</option>
-  </select>
-</div>
-
 <div class="wrap">
-
   <!-- Вкладки -->
   <div class="tabs">
     <div class="pill tabBtn btn active" data-target="section-main">Основное</div>
     <div class="pill tabBtn btn" data-target="section-calc">Калькулятор</div>
   </div>
 
-  <!-- ====== ОСНОВНОЕ (НЕ ТРОГАЛ) ====== -->
+  <!-- ====== Поиск по статьям ====== -->
   <section id="section-main">
     <div class="searchBar">
       <h1>Поисковик законов</h1>
       <div class="sub">Поиск по статьям КоАП РП и УК РП. Вводи ситуацию своими словами.</div>
       <div class="row">
-        <input id="q" type="text" placeholder="Например: проезд на красный / без документов / превышение 40" />
+        <input id="q" type="text" placeholder="Например: опасное вождение, красный" />
         <select id="lawSelect">
           <option value="Все">Все</option>
           <option value="КоАП">КоАП РП</option>
@@ -116,13 +68,13 @@ select{padding:10px;border-radius:10px;border:1px solid var(--accent-border);bac
     <div id="empty" class="empty" style="display:none">Ничего не найдено.</div>
   </section>
 
-  <!-- ====== КАЛЬКУЛЯТОР (НОВЫЙ, В ТВОЁМ СТИЛЕ) ====== -->
+  <!-- ====== Калькулятор ====== -->
   <section id="section-calc" style="display:none">
     <div class="searchBar">
       <h1>Калькулятор штрафов</h1>
-      <div class="sub">Выбирай нарушения, сумма штрафов — складывается, лишение — берём максимальный срок.</div>
+      <div class="sub">Выбирай статьи, чтобы посчитать суммарный штраф и лишение.</div>
       <div class="row">
-        <input id="q2" type="text" placeholder="Ищи статьи для добавления (пример: опасное вождение, красный)" />
+        <input id="q2" type="text" placeholder="Ищи статьи для добавления" />
         <select id="lawSelect2">
           <option value="Все">Все</option>
           <option value="КоАП">КоАП РП</option>
@@ -130,75 +82,23 @@ select{padding:10px;border-radius:10px;border:1px solid var(--accent-border);bac
         </select>
       </div>
     </div>
+
     <div id="results2" class="grid"></div>
     <div id="empty2" class="empty" style="display:none">Ничего не найдено.</div>
 
-    <!-- Итоги калькулятора -->
-    <div class="card calcPanel">
+    <div class="calcPanel">
       <div class="calcRow">
-        <div class="pill kpi">Выбрано: <span id="calc-count" class="fine">0</span></div>
-        <div class="pill kpi">Штраф всего: <span id="calc-fine" class="fine">0 ₽</span></div>
-        <div class="pill btn clearBtn" id="calc-clear">Очистить</div>
+        <div class="pill kpi">Выбрано: <span id="calc-count">0</span></div>
+        <div class="pill kpi">Штраф всего: <span id="calc-fine">0 ₽</span></div>
+        <div class="clearBtn" id="calc-clear">Очистить</div>
       </div>
-      <div class="muted" id="calc-note" style="margin-top:10px;font-size:12px">
-        Примечание: если в статье диапазон/«до», берём максимальное значение. «Предупреждение» считается как 0 ₽. Лишение суммарно не складывается — берём максимальный срок.
-      </div>
+      <div class="violationList" id="violations-list"></div>
     </div>
   </section>
-
 </div>
 
 <script>
-// === Настройки ===
-let theme = localStorage.getItem('theme') || 'dark';
-let accent = localStorage.getItem('accent') || '#4ea1ff';
-const applySettings = ()=>{
-  const dark = theme==='dark';
-  document.documentElement.style.setProperty('--bg', dark?'#0b0d10':'#f9f9f9');
-  document.documentElement.style.setProperty('--card', dark?'#12151a':'#f1f3f6');
-  document.documentElement.style.setProperty('--text', dark?'#e9eef5':'#1c1c1c');
-  document.documentElement.style.setProperty('--muted', dark?'#9fb0c3':'#555');
-  document.documentElement.style.setProperty('--accent', accent);
-  document.documentElement.style.setProperty('--accent-border', accent);
-  document.querySelectorAll('input[type="text"]').forEach(i=>{
-    i.style.background = dark?'#12151a':'#fff';
-    i.style.color = dark?'#e9eef5':'#1c1c1c';
-  });
-  document.querySelectorAll('.pill').forEach(p=>{
-    p.style.borderColor = accent;
-    p.style.color = dark?'#fff':'#000';
-  });
-};
-applySettings();
-
-const panel = document.getElementById('settingsPanel');
-const settingsBtn = document.getElementById('settingsBtn');
-settingsBtn.onclick = ()=>{ panel.classList.add('open'); settingsBtn.classList.add('hidden'); };
-document.getElementById('closePanel').onclick = (e)=>{ e.stopPropagation(); panel.classList.remove('open'); settingsBtn.classList.remove('hidden'); };
-document.addEventListener('click', e=>{
-  if(!panel.contains(e.target) && e.target!==settingsBtn){
-    panel.classList.remove('open'); settingsBtn.classList.remove('hidden');
-  }
-});
-document.getElementById('themeSelect').value = theme;
-document.getElementById('accentSelect').value = accent;
-document.getElementById('themeSelect').onchange = e=>{ theme = e.target.value; localStorage.setItem('theme', theme); applySettings(); };
-document.getElementById('accentSelect').onchange = e=>{ accent = e.target.value; localStorage.setItem('accent', accent); applySettings(); };
-
-// === Подсветка ===
-const norm = s => (s||"").toLowerCase().replace(/[ё]/g,'е').replace(/[^a-zA-Zа-яА-Я0-9+ ]+/g,' ').replace(/\s+/g,' ').trim();
-function highlight(text, query){
-  const q = norm(query).split(' ').filter(w=>w.length>2);
-  if(!q.length) return text;
-  let out = text;
-  q.forEach(w=>{
-    const re = new RegExp(`(${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,'gi');
-    out = out.replace(re,'<span class="hl">$1</span>');
-  });
-  return out;
-}
-
-// === База данных (как у тебя — НЕ ТРОГАЛ) ===
+// === DB ===
 const DB = [
   {gl:'4', art:'4.1', title:'Умышленное причинение вреда здоровью без летального исхода', law:'Умышленное причинение вреда здоровью человека без летального исхода.', fine:'Арест 1 год', tags:['вред','здоровье','без летального исхода'], lawCode:'УК'},
   {gl:'4', art:'4.2', title:'Особо тяжкие телесные повреждения с предсмертным исходом', law:'Умышленное нанесение особо тяжких телесных повреждений, по итогу которых человек был доведен до предсмертного положения.', fine:'Арест 2 года', tags:['тяжкие повреждения','предсмертное состояние'], lawCode:'УК'},
@@ -332,60 +232,7 @@ const DB = [
   {gl:'19', art:'19.5', title:'Попрошайничество', law:'Занятие попрошайничеством в общественных местах.', fine:'Предупреждение или арест 10 суток', tags:['попрошайничество'], lawCode:'КоАП'},
   {gl:'19', art:'19.6', title:'Предпринимательство без регистрации/лицензии', law:'Деятельность без регистрации/лицензии при обязательности.', fine:'100 000 ₽', tags:['предпринимательство'], lawCode:'КоАП'}
 ];
-DB.forEach(x=>{ x._hay = norm([x.title, x.law, (x.tags||[]).join(' '), (x.syn||[]).join(' ')].join(' ')); });
-
-// === Поиск (ОСНОВНОЕ — БЕЗ ИЗМЕНЕНИЙ) ===
-function score(item, q){
-  const nq = norm(q);
-  if(!nq) return 0;
-  let s = 0;
-  nq.split(' ').forEach(w=>{ if(w.length>2 && item._hay.includes(w)) s+=2; });
-  (item.tags||[]).forEach(t=>{ if(nq.includes(norm(t))) s+=1; });
-  (item.syn||[]).forEach(t=>{ if(nq.includes(norm(t))) s+=1.5; });
-  if(item._hay.indexOf(nq)>=0) s+=3;
-  return s;
-}
-
-function render(results, query){
-  const box = document.getElementById('results');
-  const empty = document.getElementById('empty');
-  box.innerHTML = '';
-  if(!results.length){ empty.style.display='block'; return; }
-  empty.style.display='none';
-  results.forEach(r=>{
-    const el = document.createElement('div');
-    el.className = 'card';
-    el.innerHTML = `<div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-        <div class="pill">${r.lawCode} · Глава ${r.gl} · Статья ${r.art}</div>
-        <div class="pill">${r.lawCode === 'УК' ? 'Наказание' : 'Штраф'}: <span class="fine">${r.fine}</span></div>
-      </div>
-      <div style="font-weight:700;margin-bottom:6px">${highlight(r.title, query)}</div>
-      <div class="muted">${highlight(r.law, query)}</div>
-      ${r.tags?.length? `<div class="muted" style="margin-top:8px;font-size:12px">Теги: ${r.tags.map(t=>`#${t}`).join(' ')}</div>`:''}`;
-    box.appendChild(el);
-  });
-}
-
-function search(){
-  const q = document.getElementById('q').value;
-  const lawSel = document.getElementById('lawSelect').value;
-  let dbFiltered = DB;
-  if(lawSel !== 'Все') dbFiltered = DB.filter(x=>x.lawCode===lawSel);
-
-  let results;
-  if(!q.trim()) results = dbFiltered;
-  else results = dbFiltered.map(x=>({...x, _s:score(x,q)})).filter(x=>x._s>0).sort((a,b)=>b._s - a._s);
-
-  render(results, q);
-}
-const inp = document.getElementById('q');
-let t;
-inp.addEventListener('input', ()=>{ clearTimeout(t); t = setTimeout(search, 200); });
-inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); search(); }});
-document.getElementById('lawSelect').addEventListener('change', search);
-
-// Инициализация основного
-search();
+DB.forEach(x=>x._hay = (x.title+' '+x.law+' '+(x.tags||[]).join(' ')).toLowerCase());
 
 // === Вкладки ===
 document.querySelectorAll('.tabBtn').forEach(btn=>{
@@ -397,126 +244,99 @@ document.querySelectorAll('.tabBtn').forEach(btn=>{
   });
 });
 
-// === КАЛЬКУЛЯТОР ===
+// === Подсветка ===
+function highlight(text, query){
+  if(!query) return text;
+  let q = query.toLowerCase();
+  return text.replace(new RegExp(`(${q})`, 'gi'), '<span class="hl">$1</span>');
+}
 
-// Разделённый поиск для калькулятора (использует те же score/highlight/DB)
-function renderCalc(results, query){
-  const box = document.getElementById('results2');
-  const empty = document.getElementById('empty2');
-  box.innerHTML = '';
+// === Поиск ===
+function search(inputId, resultId, emptyId, selectId){
+  const q = document.getElementById(inputId).value.toLowerCase();
+  const lawSel = document.getElementById(selectId).value;
+  let results = DB.filter(x => (lawSel==='Все'||x.lawCode===lawSel) && (x._hay.includes(q)||!q));
+  const box = document.getElementById(resultId);
+  const empty = document.getElementById(emptyId);
+  box.innerHTML='';
   if(!results.length){ empty.style.display='block'; return; }
   empty.style.display='none';
-
   results.forEach(r=>{
     const el = document.createElement('div');
-    el.className = 'card';
+    el.className='card';
     el.innerHTML = `<div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-        <div class="pill">${r.lawCode} · Глава ${r.gl} · Статья ${r.art}</div>
-        <div class="row" style="gap:8px">
-          <div class="pill">${r.lawCode === 'УК' ? 'Наказание' : 'Штраф'}: <span class="fine">${r.fine}</span></div>
-          <div class="pill btn plus" title="Добавить в расчёт">+</div>
-        </div>
+      <div class="pill">${r.lawCode} · Глава ${r.gl} · Статья ${r.art}</div>
+      <div class="pill">${r.lawCode==='УК'?'Наказание':'Штраф'}: <span class="fine">${r.fine}</span></div>
       </div>
-      <div style="font-weight:700;margin-bottom:6px">${highlight(r.title, query)}</div>
-      <div class="muted">${highlight(r.law, query)}</div>
-      ${r.tags?.length? `<div class="muted" style="margin-top:8px;font-size:12px">Теги: ${r.tags.map(t=>`#${t}`).join(' ')}</div>`:''}`;
-    // обработчик плюсика
-    el.querySelector('.plus').addEventListener('click', ()=> addViolation(r));
+      <div style="font-weight:700;margin-bottom:6px">${highlight(r.title,q)}</div>
+      <div class="muted">${highlight(r.law,q)}</div>`;
+    if(resultId==='results2'){
+      const btn = document.createElement('div'); btn.className='pill btn plus'; btn.textContent='+';
+      btn.onclick=()=>addViolation(r);
+      el.querySelector('.row').appendChild(btn);
+    }
     box.appendChild(el);
   });
 }
 
-function searchCalc(){
-  const q = document.getElementById('q2').value;
-  const lawSel = document.getElementById('lawSelect2').value;
-  let dbFiltered = DB;
-  if(lawSel !== 'Все') dbFiltered = DB.filter(x=>x.lawCode===lawSel);
+// Инициализация поиска
+document.getElementById('q').addEventListener('input', ()=>search('q','results','empty','lawSelect'));
+document.getElementById('lawSelect').addEventListener('change', ()=>search('q','results','empty','lawSelect'));
+document.getElementById('q2').addEventListener('input', ()=>search('q2','results2','empty2','lawSelect2'));
+document.getElementById('lawSelect2').addEventListener('change', ()=>search('q2','results2','empty2','lawSelect2'));
+search('q','results','empty','lawSelect');
+search('q2','results2','empty2','lawSelect2');
 
-  let results;
-  if(!q.trim()) results = dbFiltered;
-  else results = dbFiltered.map(x=>({...x, _s:score(x,q)})).filter(x=>x._s>0).sort((a,b)=>b._s - a._s);
+// === Калькулятор ===
+let calcCount=0, totalFine=0, totalBan=0;
+const MAX_FINE=200000, MAX_BAN=48;
 
-  renderCalc(results, q);
-}
-const inp2 = document.getElementById('q2');
-let t2;
-inp2.addEventListener('input', ()=>{ clearTimeout(t2); t2 = setTimeout(searchCalc, 200); });
-inp2.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); searchCalc(); }});
-document.getElementById('lawSelect2').addEventListener('change', searchCalc);
-
-// Первичная инициализация калькулятора
-searchCalc();
-
-// === Логика подсчёта ===
-let calcCount = 0;
-let totalFine = 0;      // в ₽
-let maxBanMonths = 0;   // лишение в месяцах
-
-const moneyRe = /(\d[\d\s\u202F\u00A0]*)(?:[–—-](\d[\d\s\u202F\u00A0]*))?\s*₽/gim;
-const banRe = /(лишен[^\d]{0,20}|лишение[^\d]{0,20}|до\s+)?(\d{1,3})(?:\s*[–—-]\s*(\d{1,3}))?\s*(год|года|лет|месяц|месяца|месяцев)/gim;
-
-function toInt(s){ return parseInt((s||'').replace(/[^\d]/g,''),10) || 0; }
-function formatRub(n){ return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ') + ' ₽'; }
-function months(v, unit){
-  if(/год|года|лет/i.test(unit)) return v*12;
-  if(/месяц|месяца|месяцев/i.test(unit)) return v;
-  return 0;
-}
-
-function extractPenalty(fineStr){
-  if(!fineStr) return {fine:0, banMonths:0};
-
-  // 1) Штраф: берём максимум из найденных сумм
-  let m, maxFine = 0;
-  const normStr = fineStr.replace(/руб(лей|\.|\b)/gi,'₽'); // подстрахуемся
-  while((m = moneyRe.exec(normStr))!==null){
-    const a = toInt(m[1]);
-    const b = toInt(m[2]);
-    maxFine = Math.max(maxFine, a, b);
+function parseFine(str, lawCode){
+  let f=0,b=0;
+  const money = str.match(/(\d[\d\s]*)\s*₽/);
+  if(money) f = parseInt(money[1].replace(/\s/g,''),10);
+  if(lawCode==='КоАП'){
+    const y = str.match(/(\d+)\s*год/); if(y) b+=parseInt(y[1],10)*12;
+    const mo = str.match(/(\d+)\s*месяц/); if(mo) b+=parseInt(mo[1],10);
   }
-  // если нет денег, но есть "Предупреждение" — оставляем 0
-
-  // 2) Лишение: берём максимум верхней границы/единственного значения
-  let maxMonths = 0;
-  while((m = banRe.exec(normStr))!==null){
-    const a = toInt(m[2]);
-    const b = toInt(m[3]);
-    const unit = m[4]||'';
-    const candidate = months(Math.max(a, b||0), unit);
-    maxMonths = Math.max(maxMonths, candidate);
-  }
-
-  return {fine:maxFine, banMonths:maxMonths};
+  return {fine:f,ban:b};
 }
 
 function addViolation(item){
-  const {fine, banMonths} = extractPenalty(item.fine||'');
-  calcCount += 1;
-  totalFine += fine;
-  maxBanMonths = Math.max(maxBanMonths, banMonths);
+  const {fine, ban}=parseFine(item.fine,item.lawCode);
+  calcCount++;
+  totalFine+=fine;
+  totalBan+=ban;
+  if(totalFine>MAX_FINE) totalFine=MAX_FINE;
+  if(totalBan>MAX_BAN) totalBan=MAX_BAN;
+
+  const v = document.createElement('div'); v.className='violationItem';
+  v.innerHTML=`<span>${item.title}</span><span>${fine} ₽</span><span>${ban?Math.floor(ban/12)+' год(а)':'нет'}</span><button>×</button>`;
+  v.querySelector('button').onclick=()=>{removeViolation(v,fine,ban)};
+  document.getElementById('violations-list').appendChild(v);
+  updateCalcUI();
+}
+
+function removeViolation(el,f,b){
+  el.remove(); calcCount--; totalFine-=f; totalBan-=b;
+  if(totalFine<0) totalFine=0;
+  if(totalBan<0) totalBan=0;
   updateCalcUI();
 }
 
 function resetCalc(){
-  calcCount = 0;
-  totalFine = 0;
-  maxBanMonths = 0;
+  calcCount=0; totalFine=0; totalBan=0;
+  document.getElementById('violations-list').innerHTML='';
   updateCalcUI();
 }
 
-function prettyBan(monthsTotal){
-  if(monthsTotal===0) return 'нет';
-  if(monthsTotal%12===0) return (monthsTotal/12)+' год(а)';
-  return monthsTotal+' мес.';
-}
-
 function updateCalcUI(){
-  document.getElementById('calc-count').textContent = calcCount;
-  document.getElementById('calc-fine').textContent = formatRub(totalFine);
-  document.getElementById('calc-ban').textContent = prettyBan(maxBanMonths);
+  document.getElementById('calc-count').textContent=calcCount;
+  document.getElementById('calc-fine').textContent=totalFine+' ₽';
+  document.getElementById('calc-ban').textContent=totalBan?Math.floor(totalBan/12)+' год(а)':'нет';
 }
-document.getElementById('calc-clear').addEventListener('click', resetCalc);
-</script>
 
+document.getElementById('calc-clear').addEventListener('click',resetCalc);
+</script>
 </body>
 </html>
