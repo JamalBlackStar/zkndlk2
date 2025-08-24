@@ -1,74 +1,81 @@
-.calcPanel {
-  position: fixed;
-  top: 80px;
-  left: 12px;
-  width: 250px;
-  padding: 14px;
-  border-radius: 16px;
-  background: var(--card);
-  border: 1px solid var(--accent-border);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
-  z-index: 15;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+:root {
+  --bg:#0b0d10;
+  --card:#12151a;
+  --text:#e9eef5;
+  --muted:#9fb0c3;
+  --accent:#4ea1ff;
+  --accent-border:#4ea1ff;
 }
 
-.pill.kpi {
-  width: 100%;
-  text-align: left;
-  font-size: 16px;
-  margin-bottom: 10px;
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+  background:var(--bg);
+  color:var(--text);
 }
 
-.clearBtn {
-  text-align: center;
-  padding: 8px;
-  background: var(--accent);
-  border-radius: 10px;
-  color: var(--bg);
-  font-weight: 700;
-  cursor: pointer;
-}
+.wrap{max-width:920px;margin:0 auto;padding:24px}
 
-.clearBtn:hover {
-  background: var(--accent-border);
-}
+h1{font-size:clamp(20px,3.5vw,32px);margin:0 0 10px}
+.sub{color:var(--muted);margin-bottom:18px}
 
-.violationList {
-  margin-top: 20px;
-  padding: 12px;
-  border: 1px solid var(--accent-border);
-  border-radius: 12px;
-  background: var(--card);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+.searchBar{position:sticky;top:0;background:var(--bg);backdrop-filter: blur(8px); z-index:10; padding:12px 0 16px}
 
-.violationItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-  background: var(--card);
-  padding: 8px;
-  border-radius: 10px;
-  border: 1px solid var(--accent-border);
-}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
-.violationItem span {
-  color: var(--text);
-}
+input[type="text"]{flex:1;padding:14px;border:1px solid var(--accent-border);border-radius:14px;color:var(--text);outline:none;background:var(--card);}
+input::placeholder{color:#6a7a8b}
 
-.violationItem button {
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-size: 16px;
-  cursor: pointer;
-}
+select{padding:10px;border-radius:10px;border:1px solid var(--accent-border);background:var(--card);color:var(--text);cursor:pointer}
 
-.violationItem button:hover {
-  color: var(--accent-border);
+.grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
+@media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
+
+.card{background:var(--card);border:1px solid var(--accent-border);border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid var(--accent-border);background:none;font-size:12px;font-weight:700;cursor:default}
+
+.btn{cursor:pointer;user-select:none}
+
+.muted{color:var(--muted)}
+.fine{font-weight:700}
+.hl{background:rgba(78,161,255,.2); padding:0 .2em; border-radius:4px}
+
+/* Настройки/ник */
+.nick{position:fixed;top:12px;left:12px;font-weight:700;color:var(--accent);font-size:16px;}
+.nick a{color:var(--accent);text-decoration:none;}
+
+.settingsBtn{
+  position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:10px;border:none;background:var(--accent);color:#001833;font-weight:700;cursor:pointer;z-index:20;
+  transition: opacity 0.3s ease;
 }
+.settingsBtn.hidden{opacity:0;pointer-events:none;}
+
+.settingsPanel{
+  position:fixed;top:0;right:-300px;width:280px;height:100%;background:var(--card);
+  box-shadow:-4px 0 20px rgba(0,0,0,.2);padding:16px;transition:right 0.3s ease, opacity 0.3s ease;z-index:21;opacity:0;
+}
+.settingsPanel.open{right:0;opacity:1;}
+.settingsPanel h2{margin-top:0;font-size:18px;color:var(--text);}
+.settingsPanel label{display:block;margin:12px 0 4px;color:var(--text);}
+.settingsPanel select{width:100%;padding:6px 10px;border-radius:8px;border:1px solid var(--accent-border);background:var(--card);color:var(--text);}
+.closePanel{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--text);font-size:18px;cursor:pointer;}
+
+.empty{border:1px dashed #334357;border-radius:14px;padding:14px;text-align:center;color:#9db0c6}
+
+/* Вкладки и калькулятор */
+.tabs{display:flex;gap:8px;align-items:center;margin-bottom:8px;position:sticky;top:0;background:var(--bg);z-index:11;padding-top:8px}
+.tabBtn{transition:transform .1s ease}
+.tabBtn.active{background:rgba(78,161,255,.15)}
+.tabBtn.btn{cursor:pointer}
+.plus{line-height:1;padding:4px 10px}
+.calcPanel{margin-top:16px}
+.calcRow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.kpi{display:inline-flex;gap:6px;align-items:center}
+.clearBtn{margin-left:auto;cursor:pointer;padding:6px 10px;background:var(--accent);border-radius:10px;color:#001833;font-weight:700}
+.clearBtn:hover{background:var(--accent-border)}
+.violationList{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.violationItem{display:flex;justify-content:space-between;align-items:center;padding:8px;border:1px solid var(--accent-border);border-radius:10px;background:var(--card)}
+.violationItem span{color:var(--text)}
+.violationItem button{background:none;border:none;color:var(--accent);font-size:16px;cursor:pointer}
+.violationItem button:hover{color:var(--accent-border)}
